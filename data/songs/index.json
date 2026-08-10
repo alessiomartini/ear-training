@@ -1,0 +1,14 @@
+{
+  "$schema-note": "Elenco dei brani della pagina Songs. Vuoto di proposito: le annotazioni dei corpora non sono ridistribuite in questo repository. Vedi README.",
+  "fields": {
+    "id": "identificatore del brano, usato anche come nome del file .lab",
+    "title": "titolo",
+    "artist": "interprete",
+    "corpus": "isophonics | billboard | rwc | custom",
+    "lab": "percorso del file di annotazione, relativo a data/songs/",
+    "videoId": "id del video YouTube usato per la riproduzione",
+    "offset": "secondi da sommare ai tempi annotati per allinearli al video",
+    "key": { "tonic": "pitch class 0-11", "mode": "major | minor" }
+  },
+  "songs": []
+}

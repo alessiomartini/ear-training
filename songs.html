@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Songs — Ear Training Armonico</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>Ear Training Armonico</h1>
+    <nav>
+      <a href="index.html">Indice</a>
+      <a href="practice.html">Practice</a>
+      <a href="songs.html" aria-current="page">Songs</a>
+      <a href="test-parser.html">Parser</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2>Songs — non ancora implementata</h2>
+  <p class="lede">
+    Questa pagina è il punto 4 dell’ordine di sviluppo: arriva dopo che Practice
+    funziona end-to-end con la ripetizione spaziata e tutti i livelli. Le
+    fondamenta condivise però ci sono già.
+  </p>
+
+  <section class="panel">
+    <h3>Cosa è già pronto</h3>
+    <p class="muted">
+      <code>harmony.js</code> espone <code>parseLab</code> e
+      <code>segmentsToExercises</code>: da un <code>.lab</code> si ottengono già
+      esercizi nella stessa forma che usa Practice, con l’<code>offset</code> di
+      sincronizzazione applicato ai tempi. La pagina
+      <a href="test-parser.html">Parser</a> serve a controllare le annotazioni
+      prima di costruirci sopra.
+    </p>
+    <p class="muted">
+      <code>quiz-ui.js</code> è già agnostico rispetto alla sorgente audio:
+      riceve un esercizio, mostra i campi del livello e richiama
+      <code>onReplay</code>. L’unica differenza fra le due pagine resta il campo
+      <code>audio</code> dell’esercizio.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h3>Cosa manca</h3>
+    <ul class="muted">
+      <li><code>js/youtube.js</code> — iframe API, riproduzione di un intervallo
+        <code>[start, end]</code>, scorrimento continuo.</li>
+      <li>Calibrazione manuale dell’<code>offset</code>: si riproduce il primo
+        accordo annotato e si regola finché coincide.</li>
+      <li>Le tre modalità di gioco: segmento isolato, scorrimento continuo,
+        revisione dei soli accordi sbagliati.</li>
+      <li>La tonalità di ogni brano, a mano nei metadati:
+        i <code>.lab</code> non la contengono.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h3>Corpus</h3>
+    <p class="muted">
+      <code>data/songs/index.json</code> è la lista dei brani ed è
+      volutamente vuota. Le annotazioni Isophonics, McGill Billboard e RWC hanno
+      termini d’uso propri, da verificare e citare prima di ridistribuirle qui:
+      il repository non ne include nessuna. L’unico <code>.lab</code> presente,
+      <code>data/songs/sample.lab</code>, è sintetico, scritto per esercitare i
+      casi limite del parser.
+    </p>
+  </section>
+
+</main>
+
+</body>
+</html>

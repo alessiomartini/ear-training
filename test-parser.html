@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parser Harte — Ear Training Armonico</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>Ear Training Armonico</h1>
+    <nav>
+      <a href="index.html">Indice</a>
+      <a href="practice.html">Practice</a>
+      <a href="songs.html">Songs</a>
+      <a href="test-parser.html" aria-current="page">Parser</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2>Verifica del parser su un <code>.lab</code></h2>
+  <p class="lede">
+    Ogni etichetta del file viene parsata, risintetizzata con
+    <code>formatHarte</code> e riparsata. Le righe evidenziate sono quelle in cui
+    il giro non torna identico: non sempre è un difetto — la notazione Harte
+    abbreviata non sa esprimere ogni combinazione di tensioni — ma va saputo
+    prima di costruirci sopra.
+  </p>
+
+  <section class="panel">
+    <div class="controls">
+      <div class="control">
+        <label for="file">File <code>.lab</code></label>
+        <input type="file" id="file" accept=".lab,.txt,text/plain">
+      </div>
+      <div class="control">
+        <label for="tonic">Tonica</label>
+        <select id="tonic"></select>
+      </div>
+      <div class="control">
+        <label for="mode">Modo</label>
+        <select id="mode">
+          <option value="major">maggiore</option>
+          <option value="minor">minore</option>
+        </select>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:14px;font-size:.88rem">
+      Sorgente: <span id="source-name">—</span>. Il file di esempio è
+      un’annotazione sintetica scritta per esercitare i casi limite della
+      notazione. Per la verifica vera, carica un <code>.lab</code> della tua
+      copia di Isophonics o McGill Billboard: resta nel browser, non viene
+      caricato da nessuna parte.
+    </p>
+    <p id="summary"></p>
+  </section>
+
+  <section class="panel">
+    <table class="labels">
+      <thead>
+        <tr>
+          <th>Tempo</th>
+          <th>Etichetta</th>
+          <th>Parsato</th>
+          <th>Pitch class</th>
+          <th>Funzione</th>
+          <th>Round-trip</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<script type="module" src="js/test-parser.js"></script>
+</body>
+</html>

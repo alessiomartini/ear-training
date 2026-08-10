@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice — Ear Training Armonico</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/tone@14.8.49/build/Tone.js"></script>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>Ear Training Armonico</h1>
+    <nav>
+      <a href="index.html">Indice</a>
+      <a href="practice.html" aria-current="page">Practice</a>
+      <a href="songs.html">Songs</a>
+      <a href="test-parser.html">Parser</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="panel" id="setup">
+    <h2>Impostazioni</h2>
+    <div class="controls">
+      <div class="control">
+        <label for="level">Livello</label>
+        <select id="level"></select>
+      </div>
+      <div class="control">
+        <label for="context">Contesto tonale</label>
+        <select id="context">
+          <option value="authentic">Cadenza I–IV–V–I</option>
+          <option value="twofive">Cadenza ii–V–I</option>
+          <option value="drone">Drone sulla tonica</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="modes">Modo</label>
+        <select id="modes">
+          <option value="major">Solo maggiore</option>
+          <option value="both">Maggiore e minore</option>
+        </select>
+      </div>
+    </div>
+    <p class="muted" id="level-help" style="margin-top:14px"></p>
+    <p class="muted" style="font-size:.88rem">
+      Il drone è più difficile e più formativo: toglie l’appiglio della memoria a
+      breve termine. Tonalità e voicing cambiano a ogni esercizio.
+    </p>
+    <div id="start-row">
+      <button class="btn btn-primary" id="start" type="button">Inizia</button>
+      <p class="error" id="start-error" hidden></p>
+    </div>
+  </section>
+
+  <section id="session" hidden>
+
+    <div class="panel playbar">
+      <button class="btn" id="replay-chord" type="button">Riascolta accordo</button>
+      <button class="btn btn-ghost" id="replay-context" type="button">Nel contesto</button>
+      <button class="btn btn-ghost" id="skip" type="button">Salta</button>
+      <span class="key-badge" id="current-key">—</span>
+    </div>
+
+    <div class="panel">
+      <h2>Risposta</h2>
+      <div id="quiz"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Statistiche</h2>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-value" id="session-count">0</div>
+          <div class="stat-label">Esercizi</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="session-accuracy">—</div>
+          <div class="stat-label">Sessione</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="overall-accuracy">—</div>
+          <div class="stat-label">Storico</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="tracked-items">0</div>
+          <div class="stat-label">Elementi seguiti</div>
+        </div>
+      </div>
+
+      <h3>Punti deboli</h3>
+      <ul class="weakest" id="weakest"></ul>
+
+      <p class="muted" style="font-size:.84rem;margin-top:16px">
+        Motore audio: <span id="engine">—</span>.
+        <button class="btn btn-ghost" id="reset-stats" type="button" style="margin-left:8px">Azzera statistiche</button>
+      </p>
+    </div>
+
+  </section>
+
+</main>
+
+<script type="module" src="js/practice.js"></script>
+</body>
+</html>

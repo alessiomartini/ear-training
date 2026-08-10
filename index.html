@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ear Training Armonico</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>Ear Training Armonico</h1>
+    <nav>
+      <a href="index.html" aria-current="page">Indice</a>
+      <a href="practice.html">Practice</a>
+      <a href="songs.html">Songs</a>
+      <a href="test-parser.html">Parser</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <p class="lede">
+    Allenamento dell’orecchio armonico. Un accordo è un oggetto assoluto; il
+    grado è una funzione dell’accordo dato un contesto tonale. Le due pagine
+    condividono lo stesso motore armonico e la stessa interfaccia di risposta:
+    cambia solo da dove arriva il suono.
+  </p>
+
+  <div class="cards">
+    <a class="card" href="practice.html">
+      <h3>Practice</h3>
+      <p>
+        Accordi sintetizzati, tonalità e voicing randomizzati a ogni esercizio,
+        cinque livelli dalle triadi diatoniche ai rivolti. Ripetizione spaziata
+        campo per campo.
+      </p>
+    </a>
+
+    <a class="card" href="test-parser.html">
+      <h3>Parser</h3>
+      <p>
+        Verifica di <code>parseHarte</code> su un file <code>.lab</code> reale:
+        parsing, pitch class, analisi funzionale e controllo del giro di andata
+        e ritorno della notazione.
+      </p>
+    </a>
+
+    <a class="card" href="songs.html" aria-disabled="true">
+      <h3>Songs <span class="muted">— in arrivo</span></h3>
+      <p>
+        Accordi da brani annotati con timestamp, riprodotti via YouTube. Non
+        ancora implementata: vedi la pagina per lo stato.
+      </p>
+    </a>
+  </div>
+
+  <section class="panel" style="margin-top:24px">
+    <h2>Come usare Practice</h2>
+    <p class="muted">
+      Si comincia dal livello 1 con la cadenza: quattro accordi stabiliscono la
+      tonalità, poi arriva il bersaglio. Quando il livello diventa comodo, si
+      passa al drone — è più difficile e più formativo, perché toglie l’appiglio
+      della memoria a breve termine.
+    </p>
+    <p class="muted">
+      La risposta è a più campi, non a scelta multipla: grado, qualità, settima,
+      estensioni, rivolto. Sbagliare la settima e indovinare il grado conta come
+      mezzo successo, ed è su quel dato che si costruisce la ripetizione
+      spaziata: ogni campo sbagliato diventa un elemento con la sua accuratezza,
+      e gli esercizi successivi vengono campionati verso i punti deboli.
+    </p>
+    <p class="muted" style="font-size:.88rem">
+      Scorciatoie: <b>Invio</b> verifica la risposta e poi passa al prossimo
+      esercizio, <b>Spazio</b> riascolta l’accordo.
+    </p>
+  </section>
+
+</main>
+
+</body>
+</html>
