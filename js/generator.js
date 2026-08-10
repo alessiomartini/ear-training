@@ -22,33 +22,33 @@ import { weightOfKeys, pickWeighted } from './srs.js';
 export const LEVELS = [
   {
     id: 1,
-    label: 'Triadi diatoniche',
+    label: 'Diatonic triads',
     fields: ['degree', 'quality'],
-    help: 'Le sette triadi della tonalita’. Riconosci il grado e se e’ maggiore, minore o diminuita.',
+    help: 'The seven triads of the key. Name the degree, and whether it is major, minor or diminished.',
   },
   {
     id: 2,
-    label: 'Settime diatoniche',
+    label: 'Diatonic sevenths',
     fields: ['degree', 'quality', 'seventh'],
-    help: 'Le stesse funzioni con la settima: maggiore, minore, di dominante, semidiminuita.',
+    help: 'The same functions with the seventh: major, minor, dominant, half-diminished.',
   },
   {
     id: 3,
-    label: 'None, undicesime, tredicesime',
+    label: 'Ninths, elevenths, thirteenths',
     fields: ['degree', 'quality', 'seventh', 'extensions'],
-    help: 'Tensioni sopra la settima. Una o due per accordo, mai la lista completa.',
+    help: 'Tensions above the seventh. One or two per chord, never the whole stack.',
   },
   {
     id: 4,
-    label: 'Prestiti modali e dominanti secondarie',
+    label: 'Modal interchange and secondary dominants',
     fields: ['degree', 'quality', 'seventh', 'extensions', 'outOfKey'],
-    help: 'Accordi che escono dalla scala: prestiti dal modo parallelo, V/x, vii°/x.',
+    help: 'Chords that step outside the scale: borrowings from the parallel mode, V/x, vii°/x.',
   },
   {
     id: 5,
-    label: 'Rivolti e voicing sparsi',
+    label: 'Inversions and open voicings',
     fields: ['degree', 'quality', 'seventh', 'extensions', 'outOfKey', 'inversion'],
-    help: 'Lo stesso materiale con il basso sul terzo, quinto o settimo grado, e le voci distribuite.',
+    help: 'The same material with the third, fifth or seventh in the bass, and the voices spread out.',
   },
 ];
 

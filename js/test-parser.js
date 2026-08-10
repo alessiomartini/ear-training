@@ -13,6 +13,7 @@ import { parseHarte, formatHarte, chordPitchClasses, functionOf, parseLab } from
 
 const $ = (s) => document.querySelector(s);
 const PC = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const ORDINALS = ['root', '1st', '2nd', '3rd'];
 
 let segments = [];
 
@@ -49,8 +50,8 @@ function roundTrip(chord) {
       status: 'lossy',
       label,
       detail: back && back.quality !== chord.quality
-        ? `qualità ${chord.quality} → ${back.quality}`
-        : `estensioni ${before} → ${after}`,
+        ? `quality ${chord.quality} → ${back.quality}`
+        : `extensions ${before} → ${after}`,
     };
   } catch (err) {
     return { status: 'error', label: '—', detail: err.message };
@@ -91,29 +92,29 @@ function render() {
       const c = seg.chord;
       parsedCell = `${PC[c.root]} · ${c.quality}${c.seventh ? ' · ' + c.seventh : ''}`
         + (c.extensions.length ? ` · (${c.extensions.join(',')})` : '')
-        + (c.omitted.length ? ` · omesse ${c.omitted.join(',')}` : '')
-        + (c.bass !== null ? ` · basso ${PC[c.bass]}` : '');
+        + (c.omitted.length ? ` · omits ${c.omitted.join(',')}` : '')
+        + (c.bass !== null ? ` · bass ${PC[c.bass]}` : '');
 
       pcCell = chordPitchClasses(c).map((p) => PC[p]).join(' ');
 
       const fn = functionOf(c, key);
       fnCell = fn.degree
         + (fn.secondary ? ` (${fn.secondary})` : '')
-        + (fn.borrowed ? ' · prestito' : '')
-        + (fn.outOfKey ? ' · fuori tonalità' : '')
-        + (fn.inversion > 0 ? ` · ${fn.inversion}º rivolto` : '')
-        + (fn.inversion === -1 ? ' · basso estraneo' : '');
+        + (fn.borrowed ? ' · borrowed' : '')
+        + (fn.outOfKey ? ' · outside the key' : '')
+        + (fn.inversion > 0 ? ` · ${ORDINALS[fn.inversion]} inversion` : '')
+        + (fn.inversion === -1 ? ' · bass not in the chord' : '');
 
       rtCell = rt.status === 'ok'
         ? `<code>${rt.label}</code>`
         : `<code>${rt.label}</code> <span class="badge fail">${rt.detail}</span>`;
     } else if (isSilence) {
       counts.silence += 1;
-      parsedCell = '<span class="muted">silenzio / non identificato</span>';
+      parsedCell = '<span class="muted">silence / unidentified</span>';
     } else {
       counts.errors += 1;
       tr.className = 'row-fail';
-      parsedCell = '<span class="badge fail">non parsato</span>';
+      parsedCell = '<span class="badge fail">not parsed</span>';
     }
 
     tr.innerHTML = `
@@ -127,11 +128,11 @@ function render() {
   }
 
   $('#summary').innerHTML =
-    `<span class="badge">${counts.total} righe</span> `
-    + `<span class="badge ok">${counts.chords} accordi</span> `
+    `<span class="badge">${counts.total} rows</span> `
+    + `<span class="badge ok">${counts.chords} chords</span> `
     + `<span class="badge">${counts.silence} N/X</span> `
-    + `<span class="badge ${counts.lossy ? 'fail' : 'ok'}">${counts.lossy} round-trip diversi</span> `
-    + `<span class="badge ${counts.errors ? 'fail' : 'ok'}">${counts.errors} errori</span>`;
+    + `<span class="badge ${counts.lossy ? 'fail' : 'ok'}">${counts.lossy} round-trip mismatches</span> `
+    + `<span class="badge ${counts.errors ? 'fail' : 'ok'}">${counts.errors} errors</span>`;
 }
 
 const escapeHtml = (s) =>
@@ -143,7 +144,7 @@ const escapeHtml = (s) =>
 
 async function loadSample() {
   const res = await fetch('data/songs/sample.lab');
-  if (!res.ok) throw new Error(`impossibile leggere il file di esempio (${res.status})`);
+  if (!res.ok) throw new Error(`could not read the sample file (${res.status})`);
   setText(await res.text(), 'data/songs/sample.lab');
 }
 
@@ -172,7 +173,7 @@ function init() {
 
   loadSample().catch((err) => {
     $('#summary').innerHTML = `<span class="badge fail">${escapeHtml(err.message)}</span>`;
-    $('#source-name').textContent = 'nessuna';
+    $('#source-name').textContent = 'none';
   });
 }
 

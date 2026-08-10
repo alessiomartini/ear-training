@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Parser Harte — Ear Training Armonico</title>
+<title>Harte parser — Harmonic Ear Training</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,9 +11,9 @@
 
 <header class="site">
   <div class="wrap">
-    <h1>Ear Training Armonico</h1>
+    <h1>Harmonic Ear Training</h1>
     <nav>
-      <a href="index.html">Indice</a>
+      <a href="index.html">Home</a>
       <a href="practice.html">Practice</a>
       <a href="songs.html">Songs</a>
       <a href="test-parser.html" aria-current="page">Parser</a>
@@ -23,39 +23,38 @@
 
 <main class="wrap">
 
-  <h2>Verifica del parser su un <code>.lab</code></h2>
+  <h2>Checking the parser against a <code>.lab</code></h2>
   <p class="lede">
-    Ogni etichetta del file viene parsata, risintetizzata con
-    <code>formatHarte</code> e riparsata. Le righe evidenziate sono quelle in cui
-    il giro non torna identico: non sempre è un difetto — la notazione Harte
-    abbreviata non sa esprimere ogni combinazione di tensioni — ma va saputo
-    prima di costruirci sopra.
+    Every label in the file is parsed, re-serialised with
+    <code>formatHarte</code>, and parsed again. The highlighted rows are the
+    ones where the round trip does not come back identical: that is not always a
+    defect — abbreviated Harte notation cannot express every combination of
+    tensions — but it is worth knowing before building on top of it.
   </p>
 
   <section class="panel">
     <div class="controls">
       <div class="control">
-        <label for="file">File <code>.lab</code></label>
+        <label for="file"><code>.lab</code> file</label>
         <input type="file" id="file" accept=".lab,.txt,text/plain">
       </div>
       <div class="control">
-        <label for="tonic">Tonica</label>
+        <label for="tonic">Tonic</label>
         <select id="tonic"></select>
       </div>
       <div class="control">
-        <label for="mode">Modo</label>
+        <label for="mode">Mode</label>
         <select id="mode">
-          <option value="major">maggiore</option>
-          <option value="minor">minore</option>
+          <option value="major">major</option>
+          <option value="minor">minor</option>
         </select>
       </div>
     </div>
     <p class="muted" style="margin-top:14px;font-size:.88rem">
-      Sorgente: <span id="source-name">—</span>. Il file di esempio è
-      un’annotazione sintetica scritta per esercitare i casi limite della
-      notazione. Per la verifica vera, carica un <code>.lab</code> della tua
-      copia di Isophonics o McGill Billboard: resta nel browser, non viene
-      caricato da nessuna parte.
+      Source: <span id="source-name">—</span>. The sample file is a synthetic
+      annotation written to exercise the awkward corners of the notation. For a
+      real check, load a <code>.lab</code> from your own copy of Isophonics or
+      McGill Billboard: it stays in the browser and is never uploaded anywhere.
     </p>
     <p id="summary"></p>
   </section>
@@ -64,12 +63,12 @@
     <table class="labels">
       <thead>
         <tr>
-          <th>Tempo</th>
-          <th>Etichetta</th>
-          <th>Parsato</th>
-          <th>Pitch class</th>
-          <th>Funzione</th>
-          <th>Round-trip</th>
+          <th>Time</th>
+          <th>Label</th>
+          <th>Parsed</th>
+          <th>Pitch classes</th>
+          <th>Function</th>
+          <th>Round trip</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>

@@ -42,8 +42,8 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 export async function init() {
   if (ready) return engine;
   if (typeof Tone === 'undefined') {
-    throw new Error('Tone.js non è stato caricato. Viene preso da unpkg.com: '
-      + 'controlla la connessione o eventuali blocchi di rete.');
+    throw new Error('Tone.js did not load. It is fetched from unpkg.com: '
+      + 'check your connection, or anything blocking that host.');
   }
 
   await Tone.start();

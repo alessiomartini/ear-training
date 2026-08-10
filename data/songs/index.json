@@ -1,13 +1,13 @@
 {
-  "$schema-note": "Elenco dei brani della pagina Songs. Vuoto di proposito: le annotazioni dei corpora non sono ridistribuite in questo repository. Vedi README.",
+  "$schema-note": "Song list for the Songs page. Empty on purpose: the corpus annotations are not redistributed in this repository. See the README.",
   "fields": {
-    "id": "identificatore del brano, usato anche come nome del file .lab",
-    "title": "titolo",
-    "artist": "interprete",
+    "id": "song identifier, also used as the .lab filename",
+    "title": "title",
+    "artist": "performer",
     "corpus": "isophonics | billboard | rwc | custom",
-    "lab": "percorso del file di annotazione, relativo a data/songs/",
-    "videoId": "id del video YouTube usato per la riproduzione",
-    "offset": "secondi da sommare ai tempi annotati per allinearli al video",
+    "lab": "path to the annotation file, relative to data/songs/",
+    "videoId": "id of the YouTube video used for playback",
+    "offset": "seconds to add to the annotated timings to line them up with the video",
     "key": { "tonic": "pitch class 0-11", "mode": "major | minor" }
   },
   "songs": []

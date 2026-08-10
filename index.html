@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ear Training Armonico</title>
+<title>Harmonic Ear Training</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,9 +11,9 @@
 
 <header class="site">
   <div class="wrap">
-    <h1>Ear Training Armonico</h1>
+    <h1>Harmonic Ear Training</h1>
     <nav>
-      <a href="index.html" aria-current="page">Indice</a>
+      <a href="index.html" aria-current="page">Home</a>
       <a href="practice.html">Practice</a>
       <a href="songs.html">Songs</a>
       <a href="test-parser.html">Parser</a>
@@ -24,58 +24,59 @@
 <main class="wrap">
 
   <p class="lede">
-    Allenamento dell’orecchio armonico. Un accordo è un oggetto assoluto; il
-    grado è una funzione dell’accordo dato un contesto tonale. Le due pagine
-    condividono lo stesso motore armonico e la stessa interfaccia di risposta:
-    cambia solo da dove arriva il suono.
+    Ear training for harmony. A chord is an absolute object; the degree is a
+    function of that chord given a tonal context. Both pages share the same
+    harmonic engine and the same answer interface — the only thing that changes
+    is where the sound comes from.
   </p>
 
   <div class="cards">
     <a class="card" href="practice.html">
       <h3>Practice</h3>
       <p>
-        Accordi sintetizzati, tonalità e voicing randomizzati a ogni esercizio,
-        cinque livelli dalle triadi diatoniche ai rivolti. Ripetizione spaziata
-        campo per campo.
+        Synthesised chords, with the key and the voicing randomised on every
+        exercise, across five levels from diatonic triads to inversions.
+        Spaced repetition, field by field.
       </p>
     </a>
 
     <a class="card" href="test-parser.html">
       <h3>Parser</h3>
       <p>
-        Verifica di <code>parseHarte</code> su un file <code>.lab</code> reale:
-        parsing, pitch class, analisi funzionale e controllo del giro di andata
-        e ritorno della notazione.
+        Checks <code>parseHarte</code> against a real <code>.lab</code> file:
+        parsing, pitch classes, functional analysis, and a round-trip test of
+        the notation.
       </p>
     </a>
 
     <a class="card" href="songs.html" aria-disabled="true">
-      <h3>Songs <span class="muted">— in arrivo</span></h3>
+      <h3>Songs <span class="muted">— coming</span></h3>
       <p>
-        Accordi da brani annotati con timestamp, riprodotti via YouTube. Non
-        ancora implementata: vedi la pagina per lo stato.
+        Chords from timestamped song annotations, played back through YouTube.
+        Not built yet: the page explains what is missing.
       </p>
     </a>
   </div>
 
   <section class="panel" style="margin-top:24px">
-    <h2>Come usare Practice</h2>
+    <h2>How to use Practice</h2>
     <p class="muted">
-      Si comincia dal livello 1 con la cadenza: quattro accordi stabiliscono la
-      tonalità, poi arriva il bersaglio. Quando il livello diventa comodo, si
-      passa al drone — è più difficile e più formativo, perché toglie l’appiglio
-      della memoria a breve termine.
+      Start at level 1 with a cadence: four chords establish the key, then the
+      target arrives. Once a level feels comfortable, switch to the drone — it
+      is harder and it teaches more, because it takes away the crutch of
+      short-term memory.
     </p>
     <p class="muted">
-      La risposta è a più campi, non a scelta multipla: grado, qualità, settima,
-      estensioni, rivolto. Sbagliare la settima e indovinare il grado conta come
-      mezzo successo, ed è su quel dato che si costruisce la ripetizione
-      spaziata: ogni campo sbagliato diventa un elemento con la sua accuratezza,
-      e gli esercizi successivi vengono campionati verso i punti deboli.
+      The answer has several fields rather than being multiple choice: degree,
+      quality, seventh, extensions, inversion. Missing the seventh but naming
+      the degree counts as half a success, and that is exactly the data the
+      spaced repetition is built on — every field you get wrong becomes an item
+      with its own accuracy, and later exercises are sampled towards your weak
+      spots.
     </p>
     <p class="muted" style="font-size:.88rem">
-      Scorciatoie: <b>Invio</b> verifica la risposta e poi passa al prossimo
-      esercizio, <b>Spazio</b> riascolta l’accordo.
+      Shortcuts: <b>Enter</b> checks your answer, then moves to the next
+      exercise. <b>Space</b> replays the chord.
     </p>
   </section>
 

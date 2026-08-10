@@ -1,159 +1,161 @@
-# Ear Training Armonico
+# Harmonic Ear Training
 
-Sito statico per l'allenamento dell'orecchio armonico. Nessun build step,
-nessun backend: si apre con un qualsiasi server statico e si pubblica su GitHub
-Pages così com'è.
+A static site for training your ear on harmony. No build step, no backend: serve
+it with any static file server, and publish it on GitHub Pages exactly as it is.
 
-Il principio è quello della specifica: **un accordo è un oggetto assoluto, il
-grado è una funzione dell'accordo dato un contesto tonale**. Il grado non viene
-mai salvato — si ricalcola. Cambiare la tonalità di un brano rietichetta tutto
-il corpus senza toccare le annotazioni.
+The guiding principle comes from the spec: **a chord is an absolute object, and
+the degree is a function of that chord given a tonal context.** The degree is
+never stored — it is recomputed. Changing a song's key relabels the whole corpus
+without touching a single annotation.
 
-## Stato
+## Status
 
-| Punto dell'ordine di sviluppo | Stato |
+| Step in the development order | Status |
 |---|---|
-| 1. `harmony.js` + pagina di test del parser | fatto |
-| 2. `audio.js` + `generator.js` + Practice livello 1 | fatto |
-| 3. `srs.js` e i livelli 2–5 | fatto |
-| 4. `songs.html` con un brano e calibrazione dell'offset | non iniziato |
-| 5. Ampliamento del corpus | non iniziato |
+| 1. `harmony.js` + a page that tests the parser | done |
+| 2. `audio.js` + `generator.js` + Practice level 1 | done |
+| 3. `srs.js` and levels 2–5 | done |
+| 4. `songs.html` with one song and offset calibration | not started |
+| 5. Growing the corpus | not started |
 
-`songs.html` esiste come segnaposto e descrive cosa manca. `js/youtube.js` non
-c'è ancora.
+`songs.html` exists as a placeholder describing what is missing.
+`js/youtube.js` does not exist yet.
 
-## Struttura
+## Layout
 
 ```
 /
 ├── index.html
-├── practice.html          allenamento su accordi sintetizzati
-├── songs.html             segnaposto, punto 4
-├── test-parser.html       verifica di parseHarte su un .lab reale
+├── practice.html          training on synthesised chords
+├── songs.html             placeholder, step 4
+├── test-parser.html       checks parseHarte against a real .lab
 ├── js/
-│   ├── harmony.js         core armonico (Chord · Function · Grading)
-│   ├── audio.js           Tone.js: cadenza, drone, accordo
-│   ├── generator.js       pool di accordi per livello, campionato via SRS
-│   ├── srs.js             ripetizione spaziata su localStorage
-│   ├── quiz-ui.js         UI di risposta, condivisa fra le due pagine
-│   ├── practice.js        controller della pagina Practice
-│   └── test-parser.js     controller della pagina di verifica
+│   ├── harmony.js         harmonic core (Chord · Function · Grading)
+│   ├── audio.js           Tone.js: cadence, drone, chord
+│   ├── generator.js       chord pool per level, sampled through the SRS
+│   ├── srs.js             spaced repetition on localStorage
+│   ├── quiz-ui.js         answer UI, shared between both pages
+│   ├── practice.js        controller for the Practice page
+│   └── test-parser.js     controller for the parser page
 ├── data/songs/
-│   ├── index.json         elenco brani (vuoto, vedi "Corpus")
-│   └── sample.lab         annotazione sintetica per provare il parser
+│   ├── index.json         song list (empty — see "Corpus")
+│   └── sample.lab         synthetic annotation for testing the parser
 └── css/style.css
 ```
 
-## Come provarlo
+The code comments are in Italian, matching `harmony.js` as it was supplied.
 
-Il sito carica moduli ES e fa `fetch()`, quindi non funziona da `file://`.
-Serve la cartella via HTTP:
+## Running it
+
+The site loads ES modules and uses `fetch()`, so it will not work from a
+`file://` URL. Serve the directory over HTTP:
 
 ```
 python3 -m http.server 8000
 ```
 
-e apri `http://localhost:8000/`. Su GitHub Pages basta puntare Pages alla
-radice del branch: non c'è niente da compilare.
+then open `http://localhost:8000/`. On GitHub Pages, point Pages at the root of
+the branch — there is nothing to compile.
 
-Serve la rete al primo avvio: Tone.js arriva da unpkg e i campioni di
-pianoforte (Salamander Grand, CC) da `tonejs.github.io`. Se i campioni non
-arrivano entro nove secondi si passa a un `PolySynth`; se manca proprio Tone.js
-la pagina lo dice invece di restare in caricamento.
+It needs the network on first start: Tone.js comes from unpkg, and the piano
+samples (Salamander Grand, CC) from `tonejs.github.io`. If the samples do not
+arrive within nine seconds it falls back to a `PolySynth`; if Tone.js itself is
+missing, the page says so instead of hanging on a loading state.
 
 ## Practice
 
-Il ciclo è: si stabilisce la tonalità, si suona il bersaglio, si risponde, si
-corregge campo per campo.
+The cycle: establish the key, play the target, answer, get graded field by
+field.
 
-**Contesto tonale** — cadenza `I–IV–V–I`, cadenza `ii–V–I`, oppure drone sulla
-tonica. Il drone è più difficile e più formativo: toglie l'appiglio della
-memoria a breve termine. In minore la dominante della cadenza è maggiore
-(minore armonica), altrimenti la tonalità non si stabilisce.
+**Tonal context** — an `I–IV–V–I` cadence, a `ii–V–I` cadence, or a drone on the
+tonic. The drone is harder and it teaches more: it takes away the crutch of
+short-term memory. In minor the cadence uses a major dominant (harmonic minor),
+because the natural v does not establish the key — and establishing it is the
+whole point.
 
-**Tonalità e voicing sono randomizzati a ogni esercizio.** Senza questo si
-impara il timbro assoluto invece della funzione.
+**The key and the voicing are randomised on every exercise.** Without that you
+learn absolute timbre instead of function.
 
-**Livelli** — cumulativi nei campi valutati:
+**Levels** — the graded fields accumulate:
 
-| # | Contenuto | Campi valutati |
+| # | Content | Graded fields |
 |---|---|---|
-| 1 | triadi diatoniche | grado, qualità |
-| 2 | settime diatoniche | + settima |
-| 3 | none, undicesime, tredicesime | + estensioni |
-| 4 | prestiti modali, dominanti secondarie | + fuori tonalità |
-| 5 | rivolti e voicing sparsi | + rivolto |
+| 1 | diatonic triads | degree, quality |
+| 2 | diatonic sevenths | + seventh |
+| 3 | ninths, elevenths, thirteenths | + extensions |
+| 4 | modal interchange, secondary dominants | + outside the key |
+| 5 | inversions and open voicings | + inversion |
 
-Livello, contesto e modo si cambiano durante la sessione, e restano memorizzati.
-Scorciatoie: **Invio** verifica e poi passa al prossimo, **Spazio** riascolta
-l'accordo.
+Level, context and mode can be changed mid-session, and they are remembered.
+Shortcuts: **Enter** checks and then advances, **Space** replays the chord.
 
-## Ripetizione spaziata
+## Spaced repetition
 
-È la differenza fra un giocattolo e uno strumento che fa migliorare, quindi vale
-la pena dire come funziona.
+This is the difference between a toy and something that actually makes you
+better, so it is worth spelling out.
 
-Un *item* non è un accordo: è un **campo sbagliabile**, nella forma che produce
-`harmony.itemKeyFor` — `degree:bVI`, `seventh:maj7`, `extensions:9+13`,
-`inversion:2`. Lo stesso accordo alimenta più item insieme, così la debolezza su
-un campo emerge indipendentemente dagli altri. Per ogni item si tiene
-`{ seen, correct, lastSeen }` in `localStorage`, e il peso di campionamento è
+An *item* is not a chord: it is a **field you can get wrong**, in the form
+produced by `harmony.itemKeyFor` — `degree:bVI`, `seventh:maj7`,
+`extensions:9+13`, `inversion:2`. A single chord feeds several items at once, so
+weakness on one field surfaces independently of the others. Each item keeps
+`{ seen, correct, lastSeen }` in `localStorage`, and the sampling weight is
 
 ```
-peso = (FLOOR + (1 - accuratezza)) * recency(lastSeen)
+weight = (FLOOR + (1 - accuracy)) * recency(lastSeen)
 ```
 
-con `recency` che risale da 0.25 a 1 con costante di tempo di sei ore. Un item
-appena visto è temporaneamente meno probabile; uno lasciato da parte torna a
-galla da solo. `FLOOR` tiene in circolo anche quelli padroneggiati.
+where `recency` climbs from 0.25 back to 1 with a six-hour time constant. An
+item you have just seen is temporarily less likely; one you have neglected
+resurfaces on its own. `FLOOR` keeps mastered items in circulation.
 
-Il generatore costruisce il pool del livello nella tonalità sorteggiata, somma i
-pesi degli item che ogni candidato metterebbe alla prova e campiona in
-proporzione. In prova, sbagliando sistematicamente `seventh:maj7`, la quota di
-accordi con settima maggiore sale dal 29% al 57% in un centinaio di esercizi.
+The generator builds the level's pool in the drawn key, sums the weights of the
+items each candidate would test, and samples in proportion. In testing, getting
+`seventh:maj7` wrong every time pushes the share of major-seventh chords from
+29% to 57% within about a hundred exercises.
 
-## Corpus (pagina Songs)
+## Corpus (the Songs page)
 
-Il repository **non contiene annotazioni dei corpora**. Isophonics, McGill
-Billboard e RWC hanno termini d'uso propri, da verificare e citare prima di
-ridistribuirli. L'unico `.lab` presente, `data/songs/sample.lab`, è sintetico:
-serve solo a esercitare i casi limite del parser.
+This repository **ships no corpus annotations**. Isophonics, McGill Billboard
+and RWC each come with their own terms of use, to be checked and credited before
+redistributing them. The only `.lab` present, `data/songs/sample.lab`, is
+synthetic: it exists purely to exercise the awkward corners of the parser.
 
-La pagina `test-parser.html` accetta un file dal disco: se hai una tua copia di
-Isophonics puoi verificarci il parser senza che il file esca dal browser.
+The `test-parser.html` page accepts a file from disk, so if you have your own
+copy of Isophonics you can check the parser against it without the file ever
+leaving the browser.
 
-## Modifiche a `harmony.js`
+## Changes to `harmony.js`
 
-Il modulo è arrivato già scritto e testato. Sono state fatte due aggiunte, solo
-additive — nessun comportamento esistente cambia:
+The module arrived already written and tested. Two additions were made, both
+purely additive — no existing behaviour changes:
 
-1. **`gradeAnswer` accetta il campo `outOfKey`.** La tabella dei livelli della
-   specifica lo prevede al livello 4, ma lo `switch` non aveva il caso e il
-   campo sarebbe stato ignorato in silenzio.
-2. **`itemKeyFor` è esportata.** `gradeAnswer` restituisce le chiavi solo dei
-   campi *sbagliati*; per calcolare un'accuratezza servono anche i `seen` di
-   quelli giusti, e senza questa export il chiamante avrebbe dovuto duplicare la
-   costruzione delle chiavi.
+1. **`gradeAnswer` accepts an `outOfKey` field.** The spec's level table calls
+   for it at level 4, but the `switch` had no case for it, so the field would
+   have been silently ignored.
+2. **`itemKeyFor` is exported.** `gradeAnswer` only returns keys for the fields
+   you got *wrong*; computing an accuracy also needs the `seen` counts of the
+   ones you got right, and without this export the caller would have had to
+   duplicate the key construction.
 
-## Cose sapute
+## Known limitations
 
-- **`formatHarte` non sa esprimere ogni combinazione di tensioni.** `C:maj7(13)`
-  torna indietro come `C:maj13`, che sottintende anche la nona e l'undicesima.
-  Non tocca la correzione, che lavora sull'oggetto `Chord` e non sulla stringa:
-  riguarda solo l'etichetta mostrata a schermo, che infatti è affiancata da una
-  descrizione in italiano generata dai campi. Il generatore evita comunque il
-  caso peggiore producendo la nona ogni volta che produce l'undicesima o la
-  tredicesima — che è poi la convenzione reale. La pagina del parser segnala
-  queste righe in giallo.
-- **`formatHarte` non ha un'abbreviazione per le settime aumentate o per una
-  triade diminuita con settima minore**: le serializza come `7` o `maj7`,
-  perdendo la qualità. Il generatore non le produce, quindi nell'app non
-  succede, ma la funzione resta esposta.
-- **La V maggiore in tonalità minore non viene proposta come bersaglio.** La
-  tabella `DIATONIC.minor` di `harmony.js` è il minore naturale e `BORROWED.minor`
-  non contiene il grado 7, quindi `functionOf` la classificherebbe come estranea
-  alla tonalità — risposta sbagliata da insegnare. Nelle cadenze, dove non viene
-  corretta, la dominante maggiore c'è. Per proporla anche come bersaglio
-  servirebbe estendere le tabelle di `harmony.js` al minore armonico.
-- L'11 naturale non viene mai proposta su accordi maggiori o di dominante: è una
-  nota da evitare e come bersaglio d'ascolto non insegna niente di utile.
+- **`formatHarte` cannot express every combination of tensions.**
+  `C:maj7(13)` comes back as `C:maj13`, which also implies the ninth and the
+  eleventh. This does not affect grading, which works on the `Chord` object
+  rather than the string: it only affects the label shown on screen, which is
+  why a plain-language description generated from the fields sits next to it.
+  The generator avoids the worst case anyway by always producing the ninth
+  whenever it produces an eleventh or a thirteenth — which is the real-world
+  convention. The parser page flags these rows in yellow.
+- **`formatHarte` has no shorthand for augmented sevenths, or for a diminished
+  triad with a minor seventh**: it serialises them as `7` or `maj7`, losing the
+  quality. The generator never produces them, so it cannot happen in the app,
+  but the function is still exposed.
+- **A major V in a minor key is never used as a target.** The `DIATONIC.minor`
+  table in `harmony.js` is the natural minor, and `BORROWED.minor` has no entry
+  for degree 7, so `functionOf` would classify it as outside the key — a wrong
+  answer to teach. In the cadences, where nothing is graded, the major dominant
+  is present. Offering it as a target too would mean extending the
+  `harmony.js` tables to the harmonic minor.
+- The natural 11 is never offered over major or dominant chords: it is an avoid
+  note, and as an ear-training target it teaches nothing useful.

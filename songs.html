@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Songs — Ear Training Armonico</title>
+<title>Songs — Harmonic Ear Training</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,9 +11,9 @@
 
 <header class="site">
   <div class="wrap">
-    <h1>Ear Training Armonico</h1>
+    <h1>Harmonic Ear Training</h1>
     <nav>
-      <a href="index.html">Indice</a>
+      <a href="index.html">Home</a>
       <a href="practice.html">Practice</a>
       <a href="songs.html" aria-current="page">Songs</a>
       <a href="test-parser.html">Parser</a>
@@ -23,54 +23,54 @@
 
 <main class="wrap">
 
-  <h2>Songs — non ancora implementata</h2>
+  <h2>Songs — not built yet</h2>
   <p class="lede">
-    Questa pagina è il punto 4 dell’ordine di sviluppo: arriva dopo che Practice
-    funziona end-to-end con la ripetizione spaziata e tutti i livelli. Le
-    fondamenta condivise però ci sono già.
+    This page is step 4 of the development order: it comes after Practice works
+    end to end, with spaced repetition and all five levels. The shared
+    foundations are already in place, though.
   </p>
 
   <section class="panel">
-    <h3>Cosa è già pronto</h3>
+    <h3>What already exists</h3>
     <p class="muted">
-      <code>harmony.js</code> espone <code>parseLab</code> e
-      <code>segmentsToExercises</code>: da un <code>.lab</code> si ottengono già
-      esercizi nella stessa forma che usa Practice, con l’<code>offset</code> di
-      sincronizzazione applicato ai tempi. La pagina
-      <a href="test-parser.html">Parser</a> serve a controllare le annotazioni
-      prima di costruirci sopra.
+      <code>harmony.js</code> exposes <code>parseLab</code> and
+      <code>segmentsToExercises</code>: a <code>.lab</code> file already yields
+      exercises in exactly the shape Practice uses, with the synchronisation
+      <code>offset</code> applied to the timings. The
+      <a href="test-parser.html">Parser</a> page is there to check annotations
+      before building on them.
     </p>
     <p class="muted">
-      <code>quiz-ui.js</code> è già agnostico rispetto alla sorgente audio:
-      riceve un esercizio, mostra i campi del livello e richiama
-      <code>onReplay</code>. L’unica differenza fra le due pagine resta il campo
-      <code>audio</code> dell’esercizio.
+      <code>quiz-ui.js</code> is already agnostic about the audio source: it
+      takes an exercise, shows the fields for the level, and calls
+      <code>onReplay</code>. The only difference between the two pages remains
+      the exercise's <code>audio</code> field.
     </p>
   </section>
 
   <section class="panel">
-    <h3>Cosa manca</h3>
+    <h3>What is missing</h3>
     <ul class="muted">
-      <li><code>js/youtube.js</code> — iframe API, riproduzione di un intervallo
-        <code>[start, end]</code>, scorrimento continuo.</li>
-      <li>Calibrazione manuale dell’<code>offset</code>: si riproduce il primo
-        accordo annotato e si regola finché coincide.</li>
-      <li>Le tre modalità di gioco: segmento isolato, scorrimento continuo,
-        revisione dei soli accordi sbagliati.</li>
-      <li>La tonalità di ogni brano, a mano nei metadati:
-        i <code>.lab</code> non la contengono.</li>
+      <li><code>js/youtube.js</code> — the iframe API, playback of a
+        <code>[start, end]</code> range, and continuous scrolling.</li>
+      <li>Manual calibration of the <code>offset</code>: play the first
+        annotated chord and nudge it until it lines up.</li>
+      <li>The three game modes: isolated segment, continuous scrolling, and
+        review of only the chords you got wrong.</li>
+      <li>The key of each song, entered by hand in the metadata — the
+        <code>.lab</code> files do not carry it.</li>
     </ul>
   </section>
 
   <section class="panel">
     <h3>Corpus</h3>
     <p class="muted">
-      <code>data/songs/index.json</code> è la lista dei brani ed è
-      volutamente vuota. Le annotazioni Isophonics, McGill Billboard e RWC hanno
-      termini d’uso propri, da verificare e citare prima di ridistribuirle qui:
-      il repository non ne include nessuna. L’unico <code>.lab</code> presente,
-      <code>data/songs/sample.lab</code>, è sintetico, scritto per esercitare i
-      casi limite del parser.
+      <code>data/songs/index.json</code> is the song list, and it is empty on
+      purpose. The Isophonics, McGill Billboard and RWC annotations each come
+      with their own terms of use, to be checked and credited before
+      redistributing them here: this repository ships none of them. The only
+      <code>.lab</code> present, <code>data/songs/sample.lab</code>, is
+      synthetic — written to exercise the awkward corners of the parser.
     </p>
   </section>
 

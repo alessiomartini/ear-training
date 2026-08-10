@@ -13,10 +13,10 @@ import { itemKeyFor } from './harmony.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-const NOTE_NAMES = ['Do', 'Re♭', 'Re', 'Mi♭', 'Mi', 'Fa', 'Sol♭', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
+const NOTE_NAMES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
 const ITEM_FIELD_LABELS = {
-  degree: 'grado', quality: 'qualità', seventh: 'settima',
-  extensions: 'estensioni', outOfKey: 'tonalità', inversion: 'rivolto',
+  degree: 'degree', quality: 'quality', seventh: 'seventh',
+  extensions: 'extensions', outOfKey: 'key relation', inversion: 'inversion',
 };
 
 const state = {
@@ -103,7 +103,7 @@ async function start() {
   const btn = $('#start');
   const error = $('#start-error');
   btn.disabled = true;
-  btn.textContent = 'Caricamento campioni…';
+  btn.textContent = 'Loading samples…';
   error.hidden = true;
 
   let engine;
@@ -112,15 +112,15 @@ async function start() {
   } catch (err) {
     // Senza audio non c'e' esercizio: meglio dirlo che restare in caricamento.
     btn.disabled = false;
-    btn.textContent = 'Riprova';
+    btn.textContent = 'Retry';
     error.textContent = err.message;
     error.hidden = false;
     return;
   }
 
   $('#engine').textContent = engine === 'sampler'
-    ? 'pianoforte campionato'
-    : 'sintetizzatore (campioni non disponibili)';
+    ? 'sampled piano'
+    : 'synthesizer (samples unavailable)';
 
   // Le impostazioni restano visibili: livello, contesto e modo si cambiano
   // durante la sessione, senza ricaricare la pagina.
@@ -176,7 +176,7 @@ function handleGraded(grade, exercise) {
 function renderKey() {
   const { tonic, mode } = state.exercise.key;
   $('#current-key').textContent =
-    `${NOTE_NAMES[tonic]} ${mode === 'major' ? 'maggiore' : 'minore'}`;
+    `${NOTE_NAMES[tonic]} ${mode === 'major' ? 'major' : 'minor'}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -199,7 +199,7 @@ function renderStats() {
   if (s.weakest.length === 0) {
     list.append(Object.assign(document.createElement('li'), {
       className: 'muted',
-      textContent: 'Ancora niente: servono almeno due tentativi su uno stesso elemento.',
+      textContent: 'Nothing yet: an item needs at least two attempts to show up here.',
     }));
     return;
   }
@@ -207,7 +207,7 @@ function renderStats() {
     const [field, value] = splitItemKey(item.key);
     const li = document.createElement('li');
     li.innerHTML = `<span class="item-name">${ITEM_FIELD_LABELS[field] ?? field} · <b>${value}</b></span>`
-      + `<span class="item-score">${Math.round(item.accuracy * 100)}% su ${item.seen}</span>`;
+      + `<span class="item-score">${Math.round(item.accuracy * 100)}% of ${item.seen}</span>`;
     list.append(li);
   }
 }
@@ -219,7 +219,7 @@ function splitItemKey(key) {
 }
 
 function resetStats() {
-  if (!confirm('Azzerare le statistiche di ripetizione spaziata? L’operazione non è reversibile.')) return;
+  if (!confirm('Reset the spaced-repetition statistics? This cannot be undone.')) return;
   srs.reset();
   state.session = { asked: 0, perfect: 0 };
   renderStats();
