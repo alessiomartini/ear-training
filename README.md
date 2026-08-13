@@ -36,6 +36,7 @@ without touching a single annotation.
 │   ├── srs.js             spaced repetition on localStorage
 │   ├── quiz-ui.js         answer UI, shared between both pages
 │   ├── practice.js        controller for the Practice page
+│   ├── notes.js           in-page notes, ideas and change requests
 │   └── test-parser.js     controller for the parser page
 ├── data/songs/
 │   ├── index.json         song list (empty — see "Corpus")
@@ -88,6 +89,32 @@ learn absolute timbre instead of function.
 
 Level, context and mode can be changed mid-session, and they are remembered.
 Shortcuts: **Enter** checks and then advances, **Space** replays the chord.
+
+## Notes & ideas
+
+Every page carries a **Notes** button in the bottom-right corner. Open it and
+jot down anything you want changed while you are using the site — that is the
+moment you actually notice things.
+
+Each note records **when** it was written, **which page** you were on, and, on
+the Practice page, **what was on screen at that moment**: level, key, target
+chord and tonal context. A note like "this chord sounded wrong" is useless
+without knowing which chord it was.
+
+Notes live in `localStorage` and never leave the browser on their own. Getting
+them out is the whole point of the feature, so there are two ways:
+
+- **Copy all** puts every note on the clipboard as Markdown, ready to paste
+  into a conversation with Claude — one request per note, each with its
+  context attached.
+- **Download .md** saves the same thing as a file.
+
+Notes can be ticked off as done (they drop to the bottom and stop counting in
+the badge) or deleted. Exporting includes both the open and the done ones, so
+the done section doubles as a record of what has already been implemented.
+
+Shortcut: **Ctrl/Cmd+Enter** in the box saves the note. Typing in the box never
+triggers the Practice keyboard shortcuts.
 
 ## Spaced repetition
 

@@ -218,3 +218,169 @@ tr.row-warn td { background: color-mix(in srgb, #d9a441 16%, transparent); }
   .grade-row { grid-template-columns: 20px 1fr; }
   .grade-given, .grade-correct { grid-column: 2; }
 }
+
+/* ---------- note e idee ---------- */
+
+.notes-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: .9rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgb(0 0 0 / .22);
+}
+.notes-toggle:hover { border-color: var(--accent); }
+.notes-toggle.is-open { border-color: var(--accent); color: var(--accent); }
+.notes-toggle-icon { font-size: 1rem; }
+.notes-badge {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #0d1017;
+  font-size: .76rem;
+  font-weight: 700;
+  text-align: center;
+}
+.notes-badge[hidden] { display: none; }
+
+.notes-panel {
+  position: fixed;
+  right: 18px;
+  bottom: 72px;
+  z-index: 41;
+  width: min(400px, calc(100vw - 36px));
+  max-height: min(70vh, 620px);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 14px 44px rgb(0 0 0 / .34);
+  padding: 16px;
+}
+.notes-panel[hidden] { display: none; }
+
+.notes-head { display: flex; align-items: center; margin-bottom: 8px; }
+.notes-title { font-size: 1rem; margin: 0; }
+.notes-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.notes-close:hover { color: var(--ink); }
+
+.notes-hint { font-size: .8rem; color: var(--ink-dim); margin: 0 0 12px; }
+
+.notes-form { display: flex; flex-direction: column; gap: 8px; }
+.notes-input {
+  width: 100%;
+  resize: vertical;
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  font: inherit;
+  font-size: .92rem;
+}
+.notes-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.notes-add { align-self: flex-start; }
+
+.notes-context {
+  margin-top: 8px;
+  font-size: .78rem;
+  color: var(--ink-dim);
+  font-family: var(--mono);
+  overflow-wrap: anywhere;
+}
+.notes-context[hidden] { display: none; }
+
+.notes-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.notes-empty { color: var(--ink-dim); font-size: .88rem; padding: 6px 2px; }
+
+.notes-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--panel-2);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.notes-item.is-done { opacity: .55; }
+.notes-item.is-done .notes-item-text { text-decoration: line-through; }
+.notes-item-body { flex: 1; min-width: 0; }
+.notes-item-text { font-size: .9rem; overflow-wrap: anywhere; }
+.notes-item-meta {
+  font-size: .72rem;
+  color: var(--ink-dim);
+  margin-top: 3px;
+  font-family: var(--mono);
+  overflow-wrap: anywhere;
+}
+.notes-item-done, .notes-item-del {
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+  font-size: .88rem;
+  padding: 2px 4px;
+  line-height: 1.2;
+}
+.notes-item-done:hover { color: var(--ok); }
+.notes-item-del:hover { color: var(--ko); }
+
+.notes-foot {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.notes-foot .btn { font-size: .85rem; padding: 7px 12px; }
+.notes-clear { margin-left: auto; }
+.notes-clear:hover { border-color: var(--ko); color: var(--ko); }
+
+.notes-status { font-size: .8rem; color: var(--ok); min-height: 1.2em; margin-top: 8px; }
+
+.notes-fallback {
+  width: 100%;
+  height: 120px;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: .78rem;
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--ko);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+@media (max-width: 480px) {
+  .notes-panel { right: 8px; left: 8px; width: auto; bottom: 66px; }
+  .notes-toggle { right: 10px; bottom: 10px; }
+}

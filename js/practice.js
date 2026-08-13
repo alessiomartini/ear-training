@@ -9,7 +9,8 @@ import * as audio from './audio.js';
 import * as srs from './srs.js';
 import { LEVELS, levelById, generateExercise } from './generator.js';
 import { createQuiz } from './quiz-ui.js';
-import { itemKeyFor } from './harmony.js';
+import * as notes from './notes.js';
+import { itemKeyFor, formatHarte } from './harmony.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -75,8 +76,22 @@ function init() {
     quiz.handleKey(ev);
   });
 
+  notes.setContextProvider(describeSituation);
+
   renderLevelHelp();
   renderStats();
+}
+
+/**
+ * Cosa c'e' a schermo adesso, per allegarlo a una nota. Senza questo una nota
+ * come "questo accordo suonava sbagliato" non e' azionabile: serve sapere quale.
+ */
+function describeSituation() {
+  const where = `Level ${state.level.id} (${state.level.label})`;
+  if (!state.exercise) return where;
+  const { key, target, fn } = state.exercise;
+  return `${where} · ${NOTE_NAMES[key.tonic]} ${key.mode} · `
+    + `target ${formatHarte(target)} = ${fn.degree} · context ${state.context}`;
 }
 
 function buildLevelSelect() {
