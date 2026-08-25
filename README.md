@@ -32,6 +32,8 @@ without touching a single annotation.
 ├── js/
 │   ├── harmony.js         harmonic core (Chord · Function · Grading)
 │   ├── audio.js           Tone.js: cadence, drone, chord
+│   ├── exercises.js       the seven exercise types, behind one contract
+│   ├── phrases.js         short transposable pieces used to establish a key
 │   ├── generator.js       chord pool per level, sampled through the SRS
 │   ├── srs.js             spaced repetition on localStorage
 │   ├── quiz-ui.js         answer UI, shared between both pages
@@ -66,30 +68,50 @@ missing, the page says so instead of hanging on a loading state.
 
 ## Practice
 
-The cycle: establish the key, play the target, answer, get graded field by
-field.
+Seven exercises share one page, one answer interface and one spaced-repetition
+store. Each declares its variants, whether it needs a key established, how to
+generate an item and how to grade it — so adding an eighth means adding an entry
+to `exercises.js`, not touching the controller.
 
-**Tonal context** — an `I–IV–V–I` cadence, a `ii–V–I` cadence, or a drone on the
-tonic. The drone is harder and it teaches more: it takes away the crutch of
-short-term memory. In minor the cadence uses a major dominant (harmonic minor),
-because the natural v does not establish the key — and establishing it is the
-whole point.
+| Exercise | Asks | Variants |
+|---|---|---|
+| Harmonic function | the degree of a chord inside a key | 5 levels, triads → inversions |
+| Triads | major, minor, diminished, augmented | block or arpeggiated |
+| Seventh chords | the triad *and* the seventh, graded separately | the four common ones, or all six |
+| Intervals | the distance between two notes | together · low first · high first · mixed |
+| Upper degrees | which degree sits above a sustained root | ♭7–13, or with alterations |
+| Metre | how the beat is grouped | 3/4 vs 4/4 · + compound · + odd |
+| Modulation | how a second passage relates to the first | the usual moves, or all |
+
+`generate` returns a **descriptor** of the sound (`{kind, …}`) rather than
+playing anything; the controller is the only place that turns one into audio.
+That is what lets the whole musical layer be tested in Node, without a browser.
+
+**Establishing a key.** Where an exercise needs one, the default plays a short
+piece in that key rather than a bare cadence — a melody moving inside the
+harmony, which is how a key settles into your ear when you listen to music. The
+pieces in `phrases.js` are written in *scale degrees*, so one phrase is exact in
+all twelve keys and transposition cannot drift. Cadences (`I–IV–V–I`, `ii–V–I`)
+and a drone are still there; the drone is hardest, because it removes the crutch
+of short-term memory.
 
 **The key and the voicing are randomised on every exercise.** Without that you
 learn absolute timbre instead of function.
 
-**Levels** — the graded fields accumulate:
+Level, context and mode can be changed mid-session, and each exercise remembers
+its own variant. Shortcuts: **Enter** checks and then advances, **Space**
+replays.
 
-| # | Content | Graded fields |
-|---|---|---|
-| 1 | diatonic triads | degree, quality |
-| 2 | diatonic sevenths | + seventh |
-| 3 | ninths, elevenths, thirteenths | + extensions |
-| 4 | modal interchange, secondary dominants | + outside the key |
-| 5 | inversions and open voicings | + inversion |
+### Two deliberate omissions
 
-Level, context and mode can be changed mid-session, and they are remembered.
-Shortcuts: **Enter** checks and then advances, **Space** replays the chord.
+- **Diminished with a major seventh** is never generated. It exists on paper and
+  not in music, so drilling it would spend your attention on a sound you will
+  never need to recognise.
+- **Metre and modulation use generated material, not real songs.** The request
+  was to play a song; the site has none, because the Songs page is unbuilt and
+  the annotated corpora are not redistributable. The grooves and the modulating
+  passages are real music-shaped audio — a groove has a bass and chords, not just
+  a click — but they are synthesised. Real songs arrive with the Songs page.
 
 ## Notes & ideas
 

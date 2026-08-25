@@ -11,6 +11,7 @@
  */
 
 import { voice } from './harmony.js';
+import { randomPhrase } from './phrases.js';
 
 const SALAMANDER_BASE = 'https://tonejs.github.io/audio/salamander/';
 
@@ -27,6 +28,8 @@ const SAMPLE_TIMEOUT_MS = 9000;
 
 let instrument = null;
 let droneSynth = null;
+let kick = null;
+let click = null;
 let engine = 'none';       // 'sampler' | 'synth'
 let ready = false;
 let droneActive = false;
@@ -81,6 +84,20 @@ export async function init() {
   }).connect(out);
   droneSynth.volume.value = -20;
 
+  // Sezione ritmica per l'esercizio sul metro: un metronomo non basta, serve
+  // qualcosa che abbia un accento vero sul primo movimento.
+  kick = new Tone.MembraneSynth({
+    pitchDecay: 0.03, octaves: 6,
+    envelope: { attack: 0.001, decay: 0.28, sustain: 0 },
+  }).connect(out);
+  kick.volume.value = -6;
+
+  click = new Tone.NoiseSynth({
+    noise: { type: 'white' },
+    envelope: { attack: 0.001, decay: 0.045, sustain: 0 },
+  }).connect(out);
+  click.volume.value = -22;
+
   ready = true;
   return engine;
 }
@@ -111,6 +128,78 @@ export function stopAll() {
   if (!ready) return;
   instrument.releaseAll?.();
   stopDrone();
+}
+
+// ---------------------------------------------------------------------------
+// Sequenze: brani, groove, tutto cio' che ha una durata
+// ---------------------------------------------------------------------------
+
+/**
+ * Riproduce una lista di eventi {notes, at, dur, velocity}, con `at` in secondi
+ * dall'inizio della sequenza.
+ * @returns {number} durata complessiva in secondi
+ */
+export function playSequence(events, { at = null, tail = 0.4 } = {}) {
+  if (!ready || events.length === 0) return 0;
+  const t0 = at ?? Tone.now() + 0.08;
+  let end = 0;
+  for (const ev of events) {
+    for (const [i, n] of ev.notes.entries()) {
+      instrument.triggerAttackRelease(midiToNote(n), ev.dur, t0 + ev.at + i * 0.008, ev.velocity ?? 0.7);
+    }
+    end = Math.max(end, ev.at + ev.dur);
+  }
+  return end + tail;
+}
+
+/**
+ * Un piccolo brano nella tonalita' data, al posto della cadenza. E' il modo in
+ * cui la tonalita' si installa quando si ascolta musica: c'e' una melodia che
+ * ci gira dentro, non quattro blocchi in fila.
+ * @returns {number} durata in secondi
+ */
+export function playPiece(key, rng = Math.random) {
+  if (!ready) return 0;
+  const { events } = randomPhrase(key, rng);
+  return playSequence(events, { tail: 0.5 });
+}
+
+/**
+ * Groove nel metro dato. `subdivision` 2 = tempo semplice, 3 = composto.
+ * Batteria per l'accento metrico, basso e accordi perche' suoni come musica e
+ * non come un metronomo: contare i click e' un esercizio diverso da sentire il
+ * movimento forte.
+ * @returns {number} durata in secondi
+ */
+export function playGroove({ beatsPerBar, subdivision = 2, tempo = 100, bars = 4, key = { tonic: 0, mode: 'minor' } }) {
+  if (!ready) return 0;
+  const beat = 60 / tempo;
+  const t0 = Tone.now() + 0.1;
+  const bassPc = 36 + (((key.tonic - 36) % 12) + 12) % 12;
+  const third = key.mode === 'minor' ? 3 : 4;
+  const chord = [bassPc + 12, bassPc + 12 + third, bassPc + 19];
+
+  for (let bar = 0; bar < bars; bar++) {
+    for (let b = 0; b < beatsPerBar; b++) {
+      const t = t0 + (bar * beatsPerBar + b) * beat;
+      const downbeat = b === 0;
+
+      if (downbeat) kick.triggerAttackRelease('C1', 0.22, t, 1);
+      else if (subdivision === 2 && beatsPerBar % 2 === 0 && b % 2 === 1) kick.triggerAttackRelease('C1', 0.16, t, 0.5);
+
+      click.triggerAttackRelease(0.05, t, downbeat ? 0.9 : 0.32);
+      for (let s = 1; s < subdivision; s++) {
+        click.triggerAttackRelease(0.03, t + (s * beat) / subdivision, 0.14);
+      }
+
+      if (downbeat) {
+        instrument.triggerAttackRelease(midiToNote(bassPc), beat * 0.9, t, 0.55);
+      } else if (b === Math.floor(beatsPerBar / 2)) {
+        chord.forEach((n, i) => instrument.triggerAttackRelease(midiToNote(n), beat * 0.7, t + i * 0.008, 0.3));
+      }
+    }
+  }
+  return bars * beatsPerBar * beat + 0.4;
 }
 
 // ---------------------------------------------------------------------------
@@ -185,6 +274,7 @@ export async function establishKey(key, mode) {
     return 1.1;
   }
   stopDrone();
+  if (mode === 'piece') return playPiece(key);
   return playCadence(key, { progression: mode });
 }
 

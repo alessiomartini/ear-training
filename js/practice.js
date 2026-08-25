@@ -1,34 +1,44 @@
 /**
  * practice.js — controller della pagina Practice.
  *
- * Ciclo: stabilisci la tonalita' → suona il bersaglio → raccogli la risposta →
- * correggi campo per campo → aggiorna la ripetizione spaziata → ripeti.
+ * Ciclo: (se serve) stabilisci la tonalita' → suona il bersaglio → raccogli la
+ * risposta → correggi campo per campo → aggiorna la ripetizione spaziata.
+ *
+ * Il controller non sa cosa sia una triade o un metro: chiede al tipo di
+ * esercizio un item, traduce il descrittore `sound` in chiamate ad `audio.js`, e
+ * gira la correzione a chi di dovere. Aggiungere un ottavo esercizio significa
+ * aggiungere una voce a `exercises.js`, non toccare questo file.
  */
 
 import * as audio from './audio.js';
 import * as srs from './srs.js';
-import { LEVELS, levelById, generateExercise } from './generator.js';
-import { createQuiz } from './quiz-ui.js';
 import * as notes from './notes.js';
-import { itemKeyFor, formatHarte } from './harmony.js';
+import { EXERCISES, exerciseById } from './exercises.js';
+import { createQuiz } from './quiz-ui.js';
 
 const $ = (sel) => document.querySelector(sel);
-
 const NOTE_NAMES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
+
 const ITEM_FIELD_LABELS = {
-  degree: 'degree', quality: 'quality', seventh: 'seventh',
-  extensions: 'extensions', outOfKey: 'key relation', inversion: 'inversion',
+  degree: 'degree', quality: 'quality', seventh: 'seventh', extensions: 'extensions',
+  outOfKey: 'key relation', inversion: 'inversion', triad: 'triad', interval: 'interval',
+  upper: 'upper degree', meter: 'metre', mod: 'modulation', 'quad-triad': 'triad',
+  'quad-7th': 'seventh',
 };
 
+const remembered = (k, fallback) => localStorage.getItem(`eartraining.${k}`) ?? fallback;
+
 const state = {
-  level: levelById(Number(localStorage.getItem('eartraining.level')) || 1),
-  context: localStorage.getItem('eartraining.context') || 'authentic',
-  modes: localStorage.getItem('eartraining.modes') || 'major',
-  exercise: null,
+  type: exerciseById(remembered('type', 'function')),
+  variant: null,
+  context: remembered('context', 'piece'),
+  modes: remembered('modes', 'major'),
+  item: null,
   lastSignature: null,
   running: false,
   session: { asked: 0, perfect: 0 },
 };
+state.variant = remembered(`variant.${state.type.id}`, state.type.variants[0].id);
 
 let quiz;
 
@@ -37,8 +47,12 @@ let quiz;
 // ---------------------------------------------------------------------------
 
 function init() {
-  buildLevelSelect();
-  restoreControls();
+  fillSelect($('#exercise'), EXERCISES.map((e) => [e.id, e.label]));
+  fillVariants();
+  $('#exercise').value = state.type.id;
+  $('#variant').value = state.variant;
+  $('#context').value = state.context;
+  $('#modes').value = state.modes;
 
   quiz = createQuiz($('#quiz'), {
     onGraded: handleGraded,
@@ -52,10 +66,20 @@ function init() {
   $('#skip').addEventListener('click', nextExercise);
   $('#reset-stats').addEventListener('click', resetStats);
 
-  $('#level').addEventListener('change', (e) => {
-    state.level = levelById(e.target.value);
-    localStorage.setItem('eartraining.level', String(state.level.id));
-    renderLevelHelp();
+  $('#exercise').addEventListener('change', (e) => {
+    state.type = exerciseById(e.target.value);
+    state.variant = remembered(`variant.${state.type.id}`, state.type.variants[0].id);
+    localStorage.setItem('eartraining.type', state.type.id);
+    fillVariants();
+    $('#variant').value = state.variant;
+    syncControls();
+    if (state.running) nextExercise();
+  });
+
+  $('#variant').addEventListener('change', (e) => {
+    state.variant = e.target.value;
+    localStorage.setItem(`eartraining.variant.${state.type.id}`, state.variant);
+    renderHelp();
     if (state.running) nextExercise();
   });
 
@@ -72,46 +96,52 @@ function init() {
   });
 
   document.addEventListener('keydown', (ev) => {
-    if (!state.running) return;
-    quiz.handleKey(ev);
+    if (state.running) quiz.handleKey(ev);
   });
 
   notes.setContextProvider(describeSituation);
-
-  renderLevelHelp();
+  syncControls();
   renderStats();
 }
 
-/**
- * Cosa c'e' a schermo adesso, per allegarlo a una nota. Senza questo una nota
- * come "questo accordo suonava sbagliato" non e' azionabile: serve sapere quale.
- */
-function describeSituation() {
-  const where = `Level ${state.level.id} (${state.level.label})`;
-  if (!state.exercise) return where;
-  const { key, target, fn } = state.exercise;
-  return `${where} · ${NOTE_NAMES[key.tonic]} ${key.mode} · `
-    + `target ${formatHarte(target)} = ${fn.degree} · context ${state.context}`;
-}
-
-function buildLevelSelect() {
-  const sel = $('#level');
-  for (const level of LEVELS) {
-    const opt = document.createElement('option');
-    opt.value = String(level.id);
-    opt.textContent = `${level.id}. ${level.label}`;
-    sel.append(opt);
+function fillSelect(sel, pairs) {
+  sel.replaceChildren();
+  for (const [value, text] of pairs) {
+    const o = document.createElement('option');
+    o.value = value;
+    o.textContent = text;
+    sel.append(o);
   }
 }
 
-function restoreControls() {
-  $('#level').value = String(state.level.id);
-  $('#context').value = state.context;
-  $('#modes').value = state.modes;
+function fillVariants() {
+  fillSelect($('#variant'), state.type.variants.map((v) => [v.id, v.label]));
 }
 
-function renderLevelHelp() {
-  $('#level-help').textContent = state.level.help;
+/** Contesto e modo hanno senso solo dove c'e' una tonalita' da stabilire. */
+function syncControls() {
+  const needsKey = state.type.needsKey;
+  $('#context-control').hidden = !needsKey;
+  $('#modes-control').hidden = !needsKey;
+  $('#replay-context').hidden = !needsKey;
+  $('#context-note').hidden = !needsKey;
+  renderHelp();
+}
+
+function renderHelp() {
+  const v = state.type.variants.find((x) => x.id === state.variant);
+  $('#level-help').textContent = v?.help ?? '';
+}
+
+/** Cosa c'e' a schermo adesso, per allegarlo a una nota. */
+function describeSituation() {
+  const v = state.type.variants.find((x) => x.id === state.variant);
+  const where = `${state.type.label} — ${v?.label ?? state.variant}`;
+  if (!state.item) return where;
+  if (state.item.key) {
+    return `${where} · ${NOTE_NAMES[state.item.key.tonic]} ${state.item.key.mode} · context ${state.context}`;
+  }
+  return where;
 }
 
 async function start() {
@@ -125,7 +155,6 @@ async function start() {
   try {
     engine = await audio.init();
   } catch (err) {
-    // Senza audio non c'e' esercizio: meglio dirlo che restare in caricamento.
     btn.disabled = false;
     btn.textContent = 'Retry';
     error.textContent = err.message;
@@ -137,8 +166,6 @@ async function start() {
     ? 'sampled piano'
     : 'synthesizer (samples unavailable)';
 
-  // Le impostazioni restano visibili: livello, contesto e modo si cambiano
-  // durante la sessione, senza ricaricare la pagina.
   state.running = true;
   $('#start-row').hidden = true;
   $('#session').hidden = false;
@@ -150,48 +177,100 @@ async function start() {
 // ---------------------------------------------------------------------------
 
 async function nextExercise() {
-  const modes = state.modes === 'both' ? ['major', 'minor'] : ['major'];
-  state.exercise = generateExercise({
-    level: state.level,
-    modes,
+  const type = state.type;
+  state.item = type.generate({
+    variant: state.variant,
+    modes: state.modes === 'both' ? ['major', 'minor'] : ['major'],
     avoid: state.lastSignature,
+    rng: Math.random,
   });
-  state.lastSignature = state.exercise.signature;
+  state.lastSignature = state.item.signature ?? null;
 
   renderKey();
-  quiz.setExercise(state.exercise);
-  await playExercise({ withContext: true });
+  quiz.setExercise({
+    fields: type.fields({ variant: state.variant }),
+    grade: (answer) => type.grade(answer, state.item),
+    canReplayContext: type.needsKey,
+  });
+  await playItem({ withContext: true });
 }
 
-/** Contesto tonale, poi il bersaglio. Con il drone il contesto resta acceso sotto. */
-async function playExercise({ withContext }) {
-  const { key, audio: source } = state.exercise;
-  if (withContext) {
-    const lead = await audio.establishKey(key, state.context);
+/** Stabilisce la tonalita' se il tipo la richiede, poi suona il bersaglio. */
+async function playItem({ withContext }) {
+  const { item, type } = { item: state.item, type: state.type };
+  if (!item) return;
+  if (withContext && type.needsKey && item.key) {
+    const lead = await audio.establishKey(item.key, state.context);
     await new Promise((r) => setTimeout(r, lead * 1000));
   }
-  audio.playNotes(source.voicing, { duration: 3.0, velocity: 0.72 });
+  playSound(item.sound);
+}
+
+/** Unico punto in cui un descrittore di suono diventa audio. */
+function playSound(sound) {
+  switch (sound.kind) {
+    case 'chord':
+      if (sound.arpeggio) {
+        const step = 0.34;
+        audio.playSequence([
+          ...sound.notes.map((n, i) => ({ notes: [n], at: i * step, dur: step * 1.6, velocity: 0.7 })),
+          { notes: sound.notes, at: sound.notes.length * step + 0.2, dur: 2.4, velocity: 0.72 },
+        ]);
+      } else {
+        audio.playNotes(sound.notes, { duration: 3.0, velocity: 0.72 });
+      }
+      break;
+
+    case 'interval': {
+      const [low, high] = sound.notes;
+      const seq = {
+        harmonic: [{ notes: [low, high], at: 0, dur: 2.6, velocity: 0.72 }],
+        up: [{ notes: [low], at: 0, dur: 1.2, velocity: 0.72 },
+             { notes: [high], at: 0.85, dur: 2.0, velocity: 0.72 }],
+        down: [{ notes: [high], at: 0, dur: 1.2, velocity: 0.72 },
+               { notes: [low], at: 0.85, dur: 2.0, velocity: 0.72 }],
+        // La radice resta sotto: senza, non c'e' nessun grado da riferire.
+        'root-then-note': [{ notes: [low], at: 0, dur: 3.4, velocity: 0.6 },
+                           { notes: [high], at: 0.75, dur: 2.4, velocity: 0.75 }],
+      }[sound.mode];
+      audio.playSequence(seq);
+      break;
+    }
+
+    case 'groove':
+      audio.playGroove(sound);
+      break;
+
+    case 'sequence':
+      audio.playSequence(sound.events);
+      break;
+  }
 }
 
 function handleReplay(what) {
-  if (!state.exercise) return;
-  if (what === 'context') playExercise({ withContext: true });
-  else audio.playNotes(state.exercise.audio.voicing, { duration: 3.0, velocity: 0.72 });
+  if (!state.item) return;
+  if (what === 'context' && state.type.needsKey) playItem({ withContext: true });
+  else playSound(state.item.sound);
 }
 
-function handleGraded(grade, exercise) {
-  const fn = grade.target.function;
-  srs.recordExercise(grade.results, (field) => itemKeyFor(field, exercise.target, fn));
-
+function handleGraded(grade) {
+  for (const [field, ok] of Object.entries(grade.results)) {
+    const key = grade.keys?.[field];
+    if (key) srs.record(key, ok);
+  }
   state.session.asked += 1;
-  if (grade.allCorrect) state.session.perfect += 1;
+  if (Object.values(grade.results).every(Boolean)) state.session.perfect += 1;
   renderStats();
 }
 
 function renderKey() {
-  const { tonic, mode } = state.exercise.key;
-  $('#current-key').textContent =
-    `${NOTE_NAMES[tonic]} ${mode === 'major' ? 'major' : 'minor'}`;
+  const key = state.item?.key;
+  const badge = $('#current-key');
+  if (!key) {
+    badge.textContent = state.type.label;
+    return;
+  }
+  badge.textContent = `${NOTE_NAMES[key.tonic]} ${key.mode}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -210,12 +289,12 @@ function renderStats() {
   $('#tracked-items').textContent = String(s.tracked);
 
   const list = $('#weakest');
-  list.innerHTML = '';
+  list.replaceChildren();
   if (s.weakest.length === 0) {
-    list.append(Object.assign(document.createElement('li'), {
-      className: 'muted',
-      textContent: 'Nothing yet: an item needs at least two attempts to show up here.',
-    }));
+    const li = document.createElement('li');
+    li.className = 'muted';
+    li.textContent = 'Nothing yet: an item needs at least two attempts to show up here.';
+    list.append(li);
     return;
   }
   for (const item of s.weakest) {
@@ -235,7 +314,7 @@ function renderStats() {
   }
 }
 
-/** Le chiavi sono `campo:valore`, e il valore puo' contenere ':' — separa solo il primo. */
+/** Le chiavi sono `campo:valore`, e il valore puo' contenere ':'. */
 function splitItemKey(key) {
   const i = key.indexOf(':');
   return [key.slice(0, i), key.slice(i + 1)];

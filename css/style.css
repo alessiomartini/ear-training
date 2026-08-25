@@ -28,6 +28,11 @@
 
 * { box-sizing: border-box; }
 
+/* `display` esplicito su una classe batte il default di [hidden]: senza questa
+   regola nascondere un elemento con .hidden = true non ha effetto sui .control,
+   .field e simili, che sono flex. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -117,7 +122,6 @@ select {
 /* ---------- quiz ---------- */
 
 .field { margin-bottom: 16px; }
-.field[hidden] { display: none; }
 .field-label { font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-dim); margin-bottom: 7px; }
 .options { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -252,7 +256,6 @@ tr.row-warn td { background: color-mix(in srgb, #d9a441 16%, transparent); }
   font-weight: 700;
   text-align: center;
 }
-.notes-badge[hidden] { display: none; }
 
 .notes-panel {
   position: fixed;
@@ -270,7 +273,6 @@ tr.row-warn td { background: color-mix(in srgb, #d9a441 16%, transparent); }
   box-shadow: 0 14px 44px rgb(0 0 0 / .34);
   padding: 16px;
 }
-.notes-panel[hidden] { display: none; }
 
 .notes-head { display: flex; align-items: center; margin-bottom: 8px; }
 .notes-title { font-size: 1rem; margin: 0; }
@@ -309,7 +311,6 @@ tr.row-warn td { background: color-mix(in srgb, #d9a441 16%, transparent); }
   font-family: var(--mono);
   overflow-wrap: anywhere;
 }
-.notes-context[hidden] { display: none; }
 
 .notes-list {
   list-style: none;

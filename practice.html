@@ -28,18 +28,23 @@
     <h2>Settings</h2>
     <div class="controls">
       <div class="control">
-        <label for="level">Level</label>
-        <select id="level"></select>
+        <label for="exercise">Exercise</label>
+        <select id="exercise"></select>
       </div>
       <div class="control">
+        <label for="variant">Variant</label>
+        <select id="variant"></select>
+      </div>
+      <div class="control" id="context-control">
         <label for="context">Tonal context</label>
         <select id="context">
+          <option value="piece">A short piece in the key</option>
           <option value="authentic">Cadence I–IV–V–I</option>
           <option value="twofive">Cadence ii–V–I</option>
           <option value="drone">Drone on the tonic</option>
         </select>
       </div>
-      <div class="control">
+      <div class="control" id="modes-control">
         <label for="modes">Mode</label>
         <select id="modes">
           <option value="major">Major only</option>
@@ -48,9 +53,11 @@
       </div>
     </div>
     <p class="muted" id="level-help" style="margin-top:14px"></p>
-    <p class="muted" style="font-size:.88rem">
-      The drone is harder and it teaches more: it takes away the crutch of
-      short-term memory. The key and the voicing change on every exercise.
+    <p class="muted" id="context-note" style="font-size:.88rem">
+      Where a key has to be established, the default plays a short piece in it
+      rather than a bare cadence: that is how a key settles into your ear when
+      you listen to music. The drone is harder still — it removes the crutch of
+      short-term memory. Key and voicing change on every exercise.
     </p>
     <div id="start-row">
       <button class="btn btn-primary" id="start" type="button">Start</button>
@@ -61,7 +68,7 @@
   <section id="session" hidden>
 
     <div class="panel playbar">
-      <button class="btn" id="replay-chord" type="button">Replay chord</button>
+      <button class="btn" id="replay-chord" type="button">Replay</button>
       <button class="btn btn-ghost" id="replay-context" type="button">In context</button>
       <button class="btn btn-ghost" id="skip" type="button">Skip</button>
       <span class="key-badge" id="current-key">—</span>
