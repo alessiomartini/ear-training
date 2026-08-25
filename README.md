@@ -180,6 +180,30 @@ purely additive — no existing behaviour changes:
    ones you got right, and without this export the caller would have had to
    duplicate the key construction.
 
+## Security notes
+
+The site is served from `alessiomartini.github.io`, and **`localStorage` is
+scoped to the origin, not to the path**. Every GitHub Pages project under that
+account shares one storage area, so the notes write token here is readable by
+JavaScript running on any of those sites. That is fine as long as they only run
+code you wrote — but never add a third-party script (an analytics snippet, a CDN
+widget, an embed) to any of them, and if you ever do, rotate every write token.
+
+For the same reason, cross-site scripting anywhere on that origin is a
+token-theft bug, not just a defacement. `data/songs/xss-probe.lab` is a
+regression fixture: a `.lab` whose label smuggles an `<img onerror=…>` through
+the `*` (omitted-degree) syntax, which `parseHarte` does not validate. It used
+to execute. The display layer now builds DOM nodes and never interpolates data
+into `innerHTML`, so it renders as inert text.
+
+The Worker's `ALLOWED_ORIGIN` restricts *browsers*; it is not an access control.
+`curl` ignores CORS entirely, so the write token is the only real gate. One
+shared token, no per-note ownership, no rate limiting: anyone holding it can
+read, write and delete everything. Rotate with `wrangler secret put NOTES_TOKEN`.
+
+Notes are stored in plain text in D1. Don't paste anything into the box you
+would not want sitting in a third-party database.
+
 ## Known limitations
 
 - **`formatHarte` cannot express every combination of tensions.**

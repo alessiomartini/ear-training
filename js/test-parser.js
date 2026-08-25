@@ -78,10 +78,10 @@ function render() {
     const tr = document.createElement('tr');
 
     const isSilence = seg.raw === 'N' || seg.raw === 'X' || seg.raw === '';
-    let parsedCell = '—';
-    let pcCell = '—';
-    let fnCell = '—';
-    let rtCell = '—';
+    let parsed = txt('—');
+    let pcs = '—';
+    let fnText = '—';
+    let roundTripCell = txt('—');
 
     if (seg.chord) {
       counts.chords += 1;
@@ -90,53 +90,67 @@ function render() {
       else if (rt.status === 'lossy') { counts.lossy += 1; tr.className = 'row-warn'; }
 
       const c = seg.chord;
-      parsedCell = `${PC[c.root]} · ${c.quality}${c.seventh ? ' · ' + c.seventh : ''}`
+      parsed = txt(`${PC[c.root]} · ${c.quality}${c.seventh ? ' · ' + c.seventh : ''}`
         + (c.extensions.length ? ` · (${c.extensions.join(',')})` : '')
         + (c.omitted.length ? ` · omits ${c.omitted.join(',')}` : '')
-        + (c.bass !== null ? ` · bass ${PC[c.bass]}` : '');
+        + (c.bass !== null ? ` · bass ${PC[c.bass]}` : ''));
 
-      pcCell = chordPitchClasses(c).map((p) => PC[p]).join(' ');
+      pcs = chordPitchClasses(c).map((p) => PC[p]).join(' ');
 
       const fn = functionOf(c, key);
-      fnCell = fn.degree
+      fnText = fn.degree
         + (fn.secondary ? ` (${fn.secondary})` : '')
         + (fn.borrowed ? ' · borrowed' : '')
         + (fn.outOfKey ? ' · outside the key' : '')
         + (fn.inversion > 0 ? ` · ${ORDINALS[fn.inversion]} inversion` : '')
         + (fn.inversion === -1 ? ' · bass not in the chord' : '');
 
-      rtCell = rt.status === 'ok'
-        ? `<code>${rt.label}</code>`
-        : `<code>${rt.label}</code> <span class="badge fail">${rt.detail}</span>`;
+      roundTripCell = frag(el('code', null, rt.label));
+      if (rt.status !== 'ok') roundTripCell.append(' ', el('span', 'badge fail', rt.detail));
     } else if (isSilence) {
       counts.silence += 1;
-      parsedCell = '<span class="muted">silence / unidentified</span>';
+      parsed = el('span', 'muted', 'silence / unidentified');
     } else {
       counts.errors += 1;
       tr.className = 'row-fail';
-      parsedCell = '<span class="badge fail">not parsed</span>';
+      parsed = el('span', 'badge fail', 'not parsed');
     }
 
-    tr.innerHTML = `
-      <td><code>${seg.start.toFixed(2)}–${seg.end.toFixed(2)}</code></td>
-      <td><code>${escapeHtml(seg.raw)}</code></td>
-      <td>${parsedCell}</td>
-      <td>${pcCell}</td>
-      <td>${fnCell}</td>
-      <td>${rtCell}</td>`;
+    tr.append(
+      cell(el('code', null, `${seg.start.toFixed(2)}–${seg.end.toFixed(2)}`)),
+      cell(el('code', null, seg.raw)),
+      cell(parsed),
+      cell(txt(pcs)),
+      cell(txt(fnText)),
+      cell(roundTripCell),
+    );
     tbody.append(tr);
   }
 
-  $('#summary').innerHTML =
-    `<span class="badge">${counts.total} rows</span> `
-    + `<span class="badge ok">${counts.chords} chords</span> `
-    + `<span class="badge">${counts.silence} N/X</span> `
-    + `<span class="badge ${counts.lossy ? 'fail' : 'ok'}">${counts.lossy} round-trip mismatches</span> `
-    + `<span class="badge ${counts.errors ? 'fail' : 'ok'}">${counts.errors} errors</span>`;
+  const summary = $('#summary');
+  summary.replaceChildren(
+    el('span', 'badge', `${counts.total} rows`), ' ',
+    el('span', 'badge ok', `${counts.chords} chords`), ' ',
+    el('span', 'badge', `${counts.silence} N/X`), ' ',
+    el('span', `badge ${counts.lossy ? 'fail' : 'ok'}`, `${counts.lossy} round-trip mismatches`), ' ',
+    el('span', `badge ${counts.errors ? 'fail' : 'ok'}`, `${counts.errors} errors`),
+  );
 }
 
-const escapeHtml = (s) =>
-  String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+/**
+ * Le celle si costruiscono come nodi, mai come stringhe HTML: le etichette
+ * arrivano da un file scelto dall'utente e `parseHarte` non valida cosa segue
+ * un `*`, quindi un `.lab` costruito ad arte potrebbe iniettare markup.
+ */
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+const txt = (s) => document.createTextNode(s);
+const frag = (...nodes) => { const f = document.createDocumentFragment(); f.append(...nodes); return f; };
+const cell = (child) => { const td = document.createElement('td'); td.append(child); return td; };
 
 // ---------------------------------------------------------------------------
 // Sorgenti
@@ -172,7 +186,7 @@ function init() {
   });
 
   loadSample().catch((err) => {
-    $('#summary').innerHTML = `<span class="badge fail">${escapeHtml(err.message)}</span>`;
+    $('#summary').replaceChildren(el('span', 'badge fail', err.message));
     $('#source-name').textContent = 'none';
   });
 }

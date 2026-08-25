@@ -221,8 +221,16 @@ function renderStats() {
   for (const item of s.weakest) {
     const [field, value] = splitItemKey(item.key);
     const li = document.createElement('li');
-    li.innerHTML = `<span class="item-name">${ITEM_FIELD_LABELS[field] ?? field} · <b>${value}</b></span>`
-      + `<span class="item-score">${Math.round(item.accuracy * 100)}% of ${item.seen}</span>`;
+    const name = document.createElement('span');
+    name.className = 'item-name';
+    name.append(`${ITEM_FIELD_LABELS[field] ?? field} · `);
+    const strong = document.createElement('b');
+    strong.textContent = value;
+    name.append(strong);
+    const score = document.createElement('span');
+    score.className = 'item-score';
+    score.textContent = `${Math.round(item.accuracy * 100)}% of ${item.seen}`;
+    li.append(name, score);
     list.append(li);
   }
 }
