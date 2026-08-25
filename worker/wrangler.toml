@@ -1,0 +1,15 @@
+name = "ear-training-notes"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Origine autorizzata a chiamare il Worker. Va cambiata se pubblichi altrove.
+[vars]
+ALLOWED_ORIGIN = "https://alessiomartini.github.io"
+
+# Il token di scrittura NON sta qui: e' un secret.
+#   wrangler secret put NOTES_TOKEN
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ear-training-notes"
+database_id = "a115be8d-df95-4279-8b3e-d6d143a86e41"

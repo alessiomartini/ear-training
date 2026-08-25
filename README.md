@@ -36,8 +36,9 @@ without touching a single annotation.
 │   ├── srs.js             spaced repetition on localStorage
 │   ├── quiz-ui.js         answer UI, shared between both pages
 │   ├── practice.js        controller for the Practice page
-│   ├── notes.js           in-page notes, ideas and change requests
+│   ├── notes.js           in-page notes, local store + D1 sync
 │   └── test-parser.js     controller for the parser page
+├── worker/                Cloudflare Worker + D1 schema for notes sync
 ├── data/songs/
 │   ├── index.json         song list (empty — see "Corpus")
 │   └── sample.lab         synthetic annotation for testing the parser
@@ -101,8 +102,23 @@ the Practice page, **what was on screen at that moment**: level, key, target
 chord and tonal context. A note like "this chord sounded wrong" is useless
 without knowing which chord it was.
 
-Notes live in `localStorage` and never leave the browser on their own. Getting
-them out is the whole point of the feature, so there are two ways:
+Notes always live in `localStorage` first, so nothing is lost when the network
+drops. Getting them *out* is the whole point of the feature, and there are two
+routes.
+
+**Cloud sync (Notes → Cloud sync).** Notes are pushed to a Cloudflare D1
+database, so they can be read from outside the browser with no copy-paste, and
+they follow you between devices. D1 is not writable from a browser — its API
+needs an account token, which on a public static site would sit in plain sight —
+so writes go through a small Worker (`worker/`). Reads do not: the database is
+queried directly.
+
+The Worker URL and a write token are pasted once per browser and kept in
+`localStorage`, never in the site's source. Without them the feature is
+local-only, exactly as before. If a push fails the note is kept and marked *not
+synced*, and it goes up on the next sync.
+
+**Manual export**, which works with or without sync:
 
 - **Copy all** puts every note on the clipboard as Markdown, ready to paste
   into a conversation with Claude — one request per note, each with its
