@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Practice — Harmonic Ear Training</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12131a" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ear Training">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://unpkg.com/tone@14.8.49/build/Tone.js"></script>
 </head>
@@ -24,8 +31,11 @@
 
 <main class="wrap">
 
-  <section class="panel" id="setup">
-    <h2>Settings</h2>
+  <details class="panel" id="setup" open>
+    <summary class="setup-summary">
+      <span class="setup-title">Settings</span>
+      <span class="setup-now" id="setup-now"></span>
+    </summary>
     <div class="controls">
       <div class="control">
         <label for="exercise">Exercise</label>
@@ -63,7 +73,7 @@
       <button class="btn btn-primary" id="start" type="button">Start</button>
       <p class="error" id="start-error" hidden></p>
     </div>
-  </section>
+  </details>
 
   <section id="session" hidden>
 
@@ -100,7 +110,10 @@
         </div>
       </div>
 
-      <h3>Weak spots</h3>
+      <h3>By exercise</h3>
+      <div class="by-exercise" id="by-exercise"></div>
+
+      <h3>Weak spots overall</h3>
       <ul class="weakest" id="weakest"></ul>
 
       <p class="muted" style="font-size:.84rem;margin-top:16px">
@@ -114,5 +127,6 @@
 </main>
 
 <script type="module" src="js/practice.js"></script>
+<script src="js/pwa.js"></script>
 </body>
 </html>

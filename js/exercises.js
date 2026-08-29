@@ -46,6 +46,7 @@ const triads = {
   id: 'triads',
   label: 'Triads',
   needsKey: false,
+  keyPrefixes: ['triad'],
   variants: [
     { id: 'block', label: 'Played together', help: 'The three notes at once. Name the quality: major, minor, diminished, augmented.' },
     { id: 'arpeggio', label: 'Arpeggiated', help: 'The three notes one after another, then together.' },
@@ -104,6 +105,7 @@ const quadriads = {
   id: 'quadriads',
   label: 'Seventh chords',
   needsKey: false,
+  keyPrefixes: ['quad-triad', 'quad-7th'],
   variants: [
     { id: 'common', label: 'The four common ones', help: 'maj7, dominant 7, min7, half-diminished — the ones you meet constantly.' },
     { id: 'all', label: 'All six', help: 'Adds the minor–major seventh and the fully diminished. Diminished with a major seventh is left out: it exists on paper and never in music.' },
@@ -169,6 +171,7 @@ const intervals = {
   id: 'intervals',
   label: 'Intervals',
   needsKey: false,
+  keyPrefixes: ['interval'],
   variants: [
     { id: 'harmonic', label: 'Together', help: 'Both notes at once. The hardest of the three, and the one that transfers to hearing chords.' },
     { id: 'up', label: 'Low note first', help: 'Ascending: the lower note, then the upper one.' },
@@ -220,6 +223,7 @@ const upperDegrees = {
   id: 'upper-degrees',
   label: 'Upper degrees',
   needsKey: false,
+  keyPrefixes: ['upper'],
   variants: [
     { id: 'basic', label: 'Sevenths to thirteenths', help: 'The root, then one note above it: ♭7, 7, 9, 11 or 13.' },
     { id: 'altered', label: 'With alterations', help: 'Adds ♭9, ♯9, ♯11 and ♭13 — the tensions that colour a dominant.' },
@@ -284,6 +288,7 @@ const meter = {
   id: 'meter',
   label: 'Metre',
   needsKey: false,
+  keyPrefixes: ['meter'],
   variants: [
     { id: 'basic', label: '3/4 or 4/4', help: 'Count to the strong beat: does it come round every three or every four?' },
     { id: 'compound', label: 'Simple and compound', help: 'Adds 2/4, 6/8, 9/8, 12/8. The question becomes whether each beat splits in two or in three.' },
@@ -352,6 +357,7 @@ const MODULATIONS = [
 const modulation = {
   id: 'modulation',
   label: 'Modulation',
+  keyPrefixes: ['mod'],
   needsKey: false,   // se le suona da se': prima la tonalita' di partenza, poi quella d'arrivo
   variants: [
     { id: 'common', label: 'The usual ones', help: 'Relative key, up a semitone, up a tone, to the dominant — what actually happens in songs.' },
@@ -441,6 +447,7 @@ const harmonicFunction = {
   id: 'function',
   label: 'Harmonic function',
   needsKey: true,
+  keyPrefixes: ['degree', 'quality', 'seventh', 'extensions', 'inversion', 'outOfKey'],
   variants: LEVELS.map((l) => ({ id: String(l.id), label: l.label, help: l.help })),
 
   fields: ({ variant }) => levelById(variant).fields.map((f) => ({

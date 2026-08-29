@@ -136,6 +136,35 @@ export function summary({ limit = 6 } = {}) {
   };
 }
 
+/**
+ * Statistiche ristrette a certe famiglie di chiavi (`degree`, `interval`, ...).
+ * Serve a rispondere "come vado sugli intervalli?" invece che solo "come vado?":
+ * con sette esercizi diversi, un unico numero globale non dice piu' niente.
+ */
+export function statsFor(prefixes) {
+  const s = load();
+  const now = Date.now();
+  let seen = 0;
+  let correct = 0;
+  let tracked = 0;
+  let weakest = null;
+
+  for (const [key, it] of Object.entries(s.items)) {
+    const family = key.slice(0, key.indexOf(':'));
+    if (!prefixes.includes(family) || it.seen === 0) continue;
+    seen += it.seen;
+    correct += it.correct;
+    tracked += 1;
+    const accuracy = it.correct / it.seen;
+    if (accuracy < 1 && it.seen >= 2) {
+      const w = weight(key, now);
+      if (!weakest || w > weakest.weight) weakest = { key, accuracy, seen: it.seen, weight: w };
+    }
+  }
+
+  return { seen, correct, accuracy: seen ? correct / seen : null, tracked, weakest };
+}
+
 export function reset() {
   state = blank();
   try {

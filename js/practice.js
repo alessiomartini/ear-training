@@ -74,6 +74,7 @@ function init() {
     $('#variant').value = state.variant;
     syncControls();
     if (state.running) nextExercise();
+    renderStats();
   });
 
   $('#variant').addEventListener('change', (e) => {
@@ -131,6 +132,8 @@ function syncControls() {
 function renderHelp() {
   const v = state.type.variants.find((x) => x.id === state.variant);
   $('#level-help').textContent = v?.help ?? '';
+  // Da chiuse, le impostazioni devono comunque dire cosa si sta facendo.
+  $('#setup-now').textContent = `${state.type.label} · ${v?.label ?? state.variant}`;
 }
 
 /** Cosa c'e' a schermo adesso, per allegarlo a una nota. */
@@ -169,6 +172,9 @@ async function start() {
   state.running = true;
   $('#start-row').hidden = true;
   $('#session').hidden = false;
+  // Su telefono le impostazioni si richiudono: lo schermo e' poco, e da li' in
+  // avanti serve la risposta, non i menu.
+  if (window.matchMedia('(max-width: 620px)').matches) $('#setup').open = false;
   nextExercise();
 }
 
@@ -288,6 +294,8 @@ function renderStats() {
   $('#overall-accuracy').textContent = s.accuracy === null ? '—' : pct(s.accuracy);
   $('#tracked-items').textContent = String(s.tracked);
 
+  renderByExercise();
+
   const list = $('#weakest');
   list.replaceChildren();
   if (s.weakest.length === 0) {
@@ -311,6 +319,55 @@ function renderStats() {
     score.textContent = `${Math.round(item.accuracy * 100)}% of ${item.seen}`;
     li.append(name, score);
     list.append(li);
+  }
+}
+
+/**
+ * Una riga per esercizio. Con sette tipi diversi un'accuratezza globale non
+ * dice piu' niente: puoi essere solidissimo sulle triadi e non aver mai
+ * toccato il metro, e il numero unico non lo distingue. Gli esercizi mai
+ * provati restano in elenco proprio per rendere visibile il buco.
+ */
+function renderByExercise() {
+  const box = $('#by-exercise');
+  box.replaceChildren();
+
+  for (const type of EXERCISES) {
+    const st = srs.statsFor(type.keyPrefixes ?? []);
+    const row = document.createElement('div');
+    row.className = 'ex-row' + (type.id === state.type.id ? ' is-current' : '')
+      + (st.seen === 0 ? ' is-untouched' : '');
+
+    const name = document.createElement('span');
+    name.className = 'ex-name';
+    name.textContent = type.label;
+
+    const count = document.createElement('span');
+    count.className = 'ex-count';
+    count.textContent = st.seen === 0 ? 'not tried yet' : `${st.seen} answer${st.seen === 1 ? '' : 's'}`;
+
+    const bar = document.createElement('span');
+    bar.className = 'ex-bar';
+    if (st.accuracy !== null) {
+      const fill = document.createElement('span');
+      fill.className = 'ex-bar-fill';
+      fill.style.width = `${Math.round(st.accuracy * 100)}%`;
+      bar.append(fill);
+    }
+
+    const score = document.createElement('span');
+    score.className = 'ex-score';
+    score.textContent = st.accuracy === null ? '—' : `${Math.round(st.accuracy * 100)}%`;
+
+    const weak = document.createElement('span');
+    weak.className = 'ex-weak';
+    if (st.weakest) {
+      const [field, value] = splitItemKey(st.weakest.key);
+      weak.textContent = `weakest: ${ITEM_FIELD_LABELS[field] ?? field} ${value}`;
+    }
+
+    row.append(name, count, bar, score, weak);
+    box.append(row);
   }
 }
 

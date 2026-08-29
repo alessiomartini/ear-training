@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Harmonic Ear Training</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12131a" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ear Training">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -87,8 +94,25 @@
     </p>
   </section>
 
+  <section class="panel">
+    <h2>Install it on your phone</h2>
+    <p class="muted">
+      This is a progressive web app, so it installs from the browser without an
+      app store. On Android, Chrome offers “Install app”. On iPhone, tap Share
+      then <b>Add to Home Screen</b>. You get an icon, full screen with no
+      browser chrome, and — after the first session, once the piano samples are
+      cached — it works with no connection at all.
+    </p>
+    <p class="muted" style="font-size:.88rem">
+      Your answer history stays on the device that recorded it: it lives in that
+      browser, and the installed app shares storage with the browser you
+      installed it from.
+    </p>
+  </section>
+
 </main>
 
 <script type="module" src="js/notes.js"></script>
+<script src="js/pwa.js"></script>
 </body>
 </html>

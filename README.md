@@ -39,7 +39,11 @@ without touching a single annotation.
 │   ├── quiz-ui.js         answer UI, shared between both pages
 │   ├── practice.js        controller for the Practice page
 │   ├── notes.js           in-page notes, local store + D1 sync
+│   ├── pwa.js             service-worker registration
 │   └── test-parser.js     controller for the parser page
+├── sw.js                  service worker: offline + install
+├── manifest.webmanifest
+├── icons/
 ├── worker/                Cloudflare Worker + D1 schema for notes sync
 ├── data/songs/
 │   ├── index.json         song list (empty — see "Corpus")
@@ -112,6 +116,35 @@ replays.
   the annotated corpora are not redistributable. The grooves and the modulating
   passages are real music-shaped audio — a groove has a bass and chords, not just
   a click — but they are synthesised. Real songs arrive with the Songs page.
+
+## On a phone
+
+The site is a progressive web app: Chrome offers “Install app”, and on iPhone
+Share → Add to Home Screen gives an icon, full screen and no browser chrome.
+No app store, no second codebase — a native app would buy nothing here, since
+everything already runs in the browser.
+
+`sw.js` uses two strategies, picked by what each one risks getting wrong:
+navigations are **network-first** (a page cached forever is how you end up stuck
+on a stale version without noticing), everything else is **cache-first** —
+modules, CSS, Tone.js and the piano samples never change within a version, and
+they are the heavy part. After one online session it runs with no connection.
+Bump `VERSION` in `sw.js` to ship an update.
+
+The layout below 620px is built for thumbs: every answer chip is at least 44px
+tall, the degree, interval and metre fields become four-column grids, the
+playback bar sticks to the top while you scroll through the options, and the
+settings collapse once you press Start — still showing which exercise you are
+on. Selects are 16px because anything smaller makes iOS zoom the page on focus.
+
+## Statistics
+
+A single global accuracy stopped meaning anything once there were seven
+exercises: you can be solid on triads and never have touched metre, and one
+number cannot tell those apart. Each exercise declares which SRS key families it
+produces (`keyPrefixes`), and `srs.statsFor` aggregates over them, so the panel
+shows a row per exercise — attempts, accuracy, weakest item. Exercises you have
+never tried stay in the list, greyed out, precisely so the gap is visible.
 
 ## Notes & ideas
 

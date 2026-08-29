@@ -81,6 +81,10 @@ select {
   border-radius: 8px;
   padding: 9px 10px;
   font: inherit;
+  /* Un select si dimensiona sull'opzione piu' lunga: senza questi due vincoli
+     "Modal interchange and secondary dominants" sfonda la pagina su telefono. */
+  width: 100%;
+  min-width: 0;
 }
 
 .btn {
@@ -425,3 +429,132 @@ tr.row-warn td { background: color-mix(in srgb, #d9a441 16%, transparent); }
 .notes-settings-actions .btn { font-size: .84rem; padding: 6px 12px; }
 
 .notes-status.is-error { color: var(--ko); }
+
+/* ---------- statistiche per esercizio ---------- */
+
+.by-exercise { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
+
+.ex-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.2fr) auto minmax(60px, 1fr) 42px;
+  grid-template-areas: 'name count bar score' 'weak weak weak weak';
+  gap: 4px 10px;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: var(--panel-2);
+  font-size: .88rem;
+}
+.ex-row.is-current { outline: 1px solid var(--accent); }
+.ex-row.is-untouched { opacity: .55; }
+
+.ex-name { grid-area: name; font-weight: 600; }
+.ex-count { grid-area: count; color: var(--ink-dim); font-size: .78rem; white-space: nowrap; }
+.ex-bar { grid-area: bar; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.ex-bar-fill { display: block; height: 100%; background: var(--ok); border-radius: 999px; }
+.ex-score { grid-area: score; text-align: right; font-variant-numeric: tabular-nums; }
+.ex-weak { grid-area: weak; color: var(--ink-dim); font-size: .76rem; }
+.ex-weak:empty { display: none; }
+
+@media (max-width: 620px) {
+  .ex-row {
+    grid-template-columns: 1fr auto 42px;
+    grid-template-areas: 'name count score' 'bar bar bar' 'weak weak weak';
+  }
+}
+
+/* ---------- impostazioni richiudibili ---------- */
+
+.setup-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.setup-summary::-webkit-details-marker { display: none; }
+.setup-summary::after {
+  content: '▾';
+  margin-left: auto;
+  color: var(--ink-dim);
+  font-size: .8rem;
+  transition: transform .15s;
+}
+#setup[open] .setup-summary::after { transform: rotate(180deg); }
+#setup[open] .setup-summary { margin-bottom: 14px; }
+.setup-now { font-size: .82rem; font-weight: 400; color: var(--ink-dim); }
+#setup[open] .setup-now { display: none; }
+
+/* ---------- telefono ---------- */
+
+.chip, .btn, .setup-summary, .notes-toggle {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+.chip:active, .btn:active:not(:disabled) { transform: scale(.97); }
+
+/* Senza puntatore l'hover resta "appiccicato" dopo il tocco. */
+@media (hover: none) {
+  .chip:hover, .btn:hover:not(:disabled), .card:hover { border-color: var(--line); }
+  .chip.selected:hover { border-color: var(--accent); }
+}
+
+@media (max-width: 620px) {
+  .wrap {
+    padding: 12px max(12px, env(safe-area-inset-left)) calc(90px + env(safe-area-inset-bottom))
+             max(12px, env(safe-area-inset-right));
+  }
+  header.site .wrap { padding-top: 10px; padding-bottom: 10px; }
+  header.site h1 { font-size: .95rem; width: 100%; }
+  header.site nav { margin-left: 0; gap: 14px; font-size: .9rem; }
+
+  .panel { padding: 14px; border-radius: 12px; margin-bottom: 12px; }
+  .controls { grid-template-columns: 1fr; gap: 10px; }
+
+  /* 16px impedisce a iOS di ingrandire la pagina al focus. */
+  select, .notes-input, .notes-field-input { font-size: 16px; }
+
+  /* La barra di riproduzione resta a portata mentre si scorre fra le opzioni. */
+  .playbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin: -12px -12px 12px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    padding: 10px 12px;
+    backdrop-filter: blur(8px);
+  }
+  .playbar .btn { flex: 1 1 auto; min-height: 44px; }
+  .playbar .key-badge { width: 100%; margin-left: 0; text-align: center; order: -1; }
+
+  /* Bersagli comodi per il pollice. */
+  .chip { min-height: 46px; padding: 11px 14px; font-size: .95rem; flex: 1 1 auto; }
+  .options { gap: 7px; }
+  .field[data-field="degree"] .options,
+  .field[data-field="interval"] .options,
+  .field[data-field="meter"] .options { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .field[data-field="degree"] .chip,
+  .field[data-field="interval"] .chip,
+  .field[data-field="meter"] .chip { min-width: 0; padding: 11px 4px; }
+
+  .quiz-actions { flex-direction: column; align-items: stretch; }
+  .quiz-actions .btn-primary { min-height: 50px; font-size: 1rem; }
+  .quiz-actions .hint { display: none; }
+  .replay-bar { display: grid; grid-template-columns: 1fr 1fr; }
+  .replay-bar .btn { min-height: 46px; }
+  .replay-bar .btn-primary { grid-column: 1 / -1; margin-left: 0; min-height: 50px; }
+
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .grade-row { font-size: .9rem; }
+}
+
+/* Installata in home: lo spazio della status bar lo gestisce la pagina. */
+@media (display-mode: standalone) {
+  header.site .wrap { padding-top: max(10px, env(safe-area-inset-top)); }
+  .notes-toggle { bottom: calc(18px + env(safe-area-inset-bottom)); }
+}
