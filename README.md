@@ -8,6 +8,21 @@ the degree is a function of that chord given a tonal context.** The degree is
 never stored — it is recomputed. Changing a song's key relabels the whole corpus
 without touching a single annotation.
 
+## On hold
+
+Two existing apps — **MyEarTraining** and **Functional Ear Trainer** — already
+cover what this project set out to do, and cover it well. Building a third
+implementation of the same exercises has no point once two good ones exist, so
+active development stops here.
+
+The repo stays as it is rather than getting archived, for a specific reason:
+if a concrete need shows up later — something those apps don't do, that's worth
+checking against them again before writing code — this codebase is the fastest
+way to try it, mainly because of the `exercises.js` contract (see "Practice"
+below), which was built to make a new exercise type a matter of adding one file,
+not restructuring the app. Everything below still describes what is here and
+how it works; it just is not moving forward for now.
+
 ## Status
 
 | Step in the development order | Status |
