@@ -18,3 +18,15 @@ worker, and local data files.
 - Preserve accessible controls, keyboard behavior, and existing audio/data formats.
 - Do not add dependencies or a build step without approval.
 - Inspect the diff and report browser verification before committing.
+- Check `FUTURE-ARCHITECTURE.md` for open ideas and half-finished parts
+  (e.g. `songs.html`, the missing corpus) before proposing new work.
+
+## Worker (`worker/`)
+
+- Plain Cloudflare Worker (`worker/src/index.js`) with a D1 database
+  (`worker/schema.sql`, table `notes`), no npm dependencies, no build step.
+- Deploy/manage with `wrangler` (see `worker/README.md`); the write token is a
+  Wrangler secret (`NOTES_TOKEN`), never committed.
+- This is a per-site D1+Worker; do not merge it with another site's database
+  without reading the "Feedback centralizzato" section in
+  `FUTURE-ARCHITECTURE.md` first — it is an unresolved idea, not a decision.
