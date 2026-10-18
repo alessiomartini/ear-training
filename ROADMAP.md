@@ -56,6 +56,11 @@ dedicato `ear-training-notes`: tolto `worker/`. Un browser che aveva salvato il 
 solo al nuovo (`loadSync` in `js/notes.js`), ma il token ora è quello di `site-notes`. Il vecchio worker e
 il suo D1 li spegne Alessio dopo la migrazione. `sw.js` passato a `v2`.
 
+Poi, lo stesso giorno: **solo invio, niente token né rilettura**. Ad Alessio non serve che il sito
+legga le note: serve che Claude le legga dal D1 e le porti in questo ROADMAP. Tolti il pannello "Cloud sync"
+(URL, token, etichetta del dispositivo), le cancellazioni remote e la rilettura da `site-notes`: ogni nota
+nuova viene solo inviata; spuntarla o cancellarla cambia la copia locale. Vecchio worker e D1 spenti. `sw.js` a `v3`.
+
 Questo file raccoglie idee non ancora implementate e cose lasciate a metà, per
 chi (umano o sessione Claude Code) riprende il progetto più avanti. Non è una
 roadmap impegnativa: il progetto è **on hold** (vedi README.md), quindi tutto
@@ -82,6 +87,6 @@ introducono strumenti (bundler, linter, test runner), aggiungerli qui insieme
 a come verificarli.
 
 ## Log
-- 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`
+- 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`; poi solo invio delle note nuove, niente token (le legge Claude dal D1)
 - 2026-10-18: FUTURE-ARCHITECTURE.md unito in ROADMAP.md (protocollo unico)
 - 2026-10-15: creata la roadmap per Projects Overview
