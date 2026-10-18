@@ -175,15 +175,13 @@ Notes always live in `localStorage` first, so nothing is lost when the network
 drops. Getting them *out* is the whole point of the feature, and there are two
 routes.
 
-**Cloud sync (Notes → Cloud sync).** Notes are pushed to the shared `site-notes`
-backend (one Cloudflare Worker + D1 for all of Alessio's sites, repo
-`alessiomartini/site-notes`, `site = 'ear-training'`), so they can be read from
-outside the browser with no copy-paste, and they follow you between devices.
-
-The Worker URL is pre-filled; the token is pasted once per browser and kept in
-`localStorage`, never in the site's source. Without them the feature is
-local-only, exactly as before. If a push fails the note is kept and marked *not
-synced*, and it goes up on the next sync.
+**Sent to the notes database, automatically.** Every new note is sent to the
+shared `site-notes` backend (one Cloudflare Worker + D1 for all of Alessio's
+sites, repo `alessiomartini/site-notes`, `site = 'ear-training'`), where Claude
+reads it and turns it into a `ROADMAP.md` item. It is write-only: no token, and
+the page never reads notes back, so ticking or deleting a note here only changes
+this browser's copy. If sending fails the note is kept and marked *not sent yet*,
+and it is retried on the next visit.
 
 **Manual export**, which works with or without sync:
 
@@ -251,23 +249,22 @@ purely additive — no existing behaviour changes:
 
 The site is served from `alessiomartini.github.io`, and **`localStorage` is
 scoped to the origin, not to the path**. Every GitHub Pages project under that
-account shares one storage area, so the notes write token here is readable by
+account shares one storage area, so the notes kept here are readable by
 JavaScript running on any of those sites. That is fine as long as they only run
-code you wrote — but never add a third-party script (an analytics snippet, a CDN
-widget, an embed) to any of them, and if you ever do, rotate every write token.
+code you wrote — never add a third-party script (an analytics snippet, a CDN
+widget, an embed) to any of them.
 
-For the same reason, cross-site scripting anywhere on that origin is a
-token-theft bug, not just a defacement. `data/songs/xss-probe.lab` is a
+For the same reason, cross-site scripting anywhere on that origin can read every
+site's local data, not just deface a page. `data/songs/xss-probe.lab` is a
 regression fixture: a `.lab` whose label smuggles an `<img onerror=…>` through
 the `*` (omitted-degree) syntax, which `parseHarte` does not validate. It used
 to execute. The display layer now builds DOM nodes and never interpolates data
 into `innerHTML`, so it renders as inert text.
 
 The Worker's origin allowlist restricts *browsers*; it is not an access control.
-`curl` ignores CORS entirely, so the token is the only real gate. One token for
-all of Alessio's sites, no per-note ownership, no rate limiting: anyone holding it
-can read, change and delete every site's notes. Without it one can only add a new
-note. Rotate with `npx wrangler secret put NOTES_TOKEN` in the `site-notes` repo.
+`curl` ignores CORS entirely, so anyone can add a note (there is no rate limit);
+but nobody can read, change or delete notes over HTTP: they are read only from
+the D1 with Alessio's Cloudflare account.
 
 Notes are stored in plain text in D1. Don't paste anything into the box you
 would not want sitting in a third-party database.
