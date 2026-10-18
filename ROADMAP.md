@@ -87,6 +87,6 @@ introducono strumenti (bundler, linter, test runner), aggiungerli qui insieme
 a come verificarli.
 
 ## Log
-- 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`; poi solo invio delle note nuove, niente token (le legge Claude dal D1)
+- 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`; poi solo invio delle note nuove, niente token (le legge Claude dal D1); le note mandano l'autore (`?sono-alessio` segna il browser di Alessio, le altre sono di visitatori)
 - 2026-10-18: FUTURE-ARCHITECTURE.md unito in ROADMAP.md (protocollo unico)
 - 2026-10-15: creata la roadmap per Projects Overview
