@@ -20,6 +20,18 @@
 const STORAGE_KEY = 'eartraining.notes.v1';
 const ENDPOINT = 'https://site-notes.alemarti-2001.workers.dev/ear-training';
 
+// ?sono-alessio on any page marks this browser as Alessio's (every alessiomartini.github.io site shares
+// localStorage): its notes get author 'alessio' in site-notes. A label to tell them from visitors', not a login.
+function noteAuthor() {
+  try {
+    if (new URLSearchParams(location.search).has('sono-alessio')) localStorage.setItem('site-notes.author', 'alessio');
+    return localStorage.getItem('site-notes.author') || undefined;
+  } catch (e) {
+    return undefined;
+  }
+}
+noteAuthor();
+
 /** @typedef {{id:string, text:string, at:number, page:string, context:string|null, done:boolean, pending:boolean}} Note */
 
 let contextProvider = null;
@@ -122,7 +134,7 @@ export async function syncNow() {
     const res = await fetch(ENDPOINT + '/notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: note.text, page: note.page, context: note.context }),
+      body: JSON.stringify({ text: note.text, page: note.page, context: note.context, author: noteAuthor() }),
     });
     if (!res.ok) throw new Error(`${res.status} ${(await res.text().catch(() => '')).slice(0, 140)}`);
     note.pending = false;
