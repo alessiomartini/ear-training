@@ -14,7 +14,7 @@
  * Cambiare VERSION invalida tutto: e' la leva per pubblicare un aggiornamento.
  */
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = `shell-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 

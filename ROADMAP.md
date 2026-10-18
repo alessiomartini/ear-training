@@ -14,7 +14,7 @@ Unico file per todo, idee, decisioni e diario, letto da Projects Overview
 
 ### Idee da valutare (non decise)
 
-#### Feedback centralizzato (idea, non ancora decisa)
+#### Feedback centralizzato (fatto il 2026-10-19: backend unico `site-notes`, vedi sotto)
 
 Oggi ogni sito di Alessio con la feature "Notes" (questo, `geopolitics-atlas`,
 e con pattern analogo anche `eating-amsterdam`, `markets-first-principles`,
@@ -49,6 +49,13 @@ futuro la manutenzione di N Worker separati diventasse un problema reale.
 
 ## Decisioni e cose provate
 
+### Note nel backend unico (2026-10-19)
+
+La sincronizzazione delle note usa `site-notes` (un Worker + D1 per tutti i siti) invece del Worker
+dedicato `ear-training-notes`: tolto `worker/`. Un browser che aveva salvato il vecchio indirizzo passa da
+solo al nuovo (`loadSync` in `js/notes.js`), ma il token ora è quello di `site-notes`. Il vecchio worker e
+il suo D1 li spegne Alessio dopo la migrazione. `sw.js` passato a `v2`.
+
 Questo file raccoglie idee non ancora implementate e cose lasciate a metà, per
 chi (umano o sessione Claude Code) riprende il progetto più avanti. Non è una
 roadmap impegnativa: il progetto è **on hold** (vedi README.md), quindi tutto
@@ -68,12 +75,13 @@ qui è "se un giorno serve", non lavoro pianificato.
 
 ### Dipendenze
 
-Il progetto non ha `package.json` (né in root né in `worker/`): è un sito
-statico senza build step e un Worker Cloudflare scritto senza dipendenze npm.
+Il progetto non ha `package.json`: è un sito statico senza build step (il Worker
+delle note ora è quello condiviso, repo `site-notes`).
 Non c'è quindi nulla da tenere aggiornato con `npm outdated` — se in futuro si
 introducono strumenti (bundler, linter, test runner), aggiungerli qui insieme
 a come verificarli.
 
 ## Log
+- 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`
 - 2026-10-18: FUTURE-ARCHITECTURE.md unito in ROADMAP.md (protocollo unico)
 - 2026-10-15: creata la roadmap per Projects Overview

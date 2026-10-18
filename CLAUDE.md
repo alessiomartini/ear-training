@@ -21,15 +21,12 @@ worker, and local data files.
 - Check `ROADMAP.md` for open ideas and half-finished parts
   (e.g. `songs.html`, the missing corpus) before proposing new work.
 
-## Worker (`worker/`)
+## Notes sync
 
-- Plain Cloudflare Worker (`worker/src/index.js`) with a D1 database
-  (`worker/schema.sql`, table `notes`), no npm dependencies, no build step.
-- Deploy/manage with `wrangler` (see `worker/README.md`); the write token is a
-  Wrangler secret (`NOTES_TOKEN`), never committed.
-- This is a per-site D1+Worker; do not merge it with another site's database
-  without reading the "Feedback centralizzato" section in
-  `ROADMAP.md` first — it is an unresolved idea, not a decision.
+- Notes sync to the shared `site-notes` Worker + D1 (repo `alessiomartini/site-notes`,
+  `site = 'ear-training'`), default endpoint in `js/notes.js`. The token is that repo's
+  `NOTES_TOKEN` secret, pasted once per browser, never committed.
+- Bump `VERSION` in `sw.js` whenever a cached asset changes.
 
 ## Roadmap, idee e progressi
 
