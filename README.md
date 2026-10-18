@@ -53,13 +53,12 @@ how it works; it just is not moving forward for now.
 │   ├── srs.js             spaced repetition on localStorage
 │   ├── quiz-ui.js         answer UI, shared between both pages
 │   ├── practice.js        controller for the Practice page
-│   ├── notes.js           in-page notes, local store + D1 sync
+│   ├── notes.js           in-page notes, local store + sync to site-notes
 │   ├── pwa.js             service-worker registration
 │   └── test-parser.js     controller for the parser page
 ├── sw.js                  service worker: offline + install
 ├── manifest.webmanifest
 ├── icons/
-├── worker/                Cloudflare Worker + D1 schema for notes sync
 ├── data/songs/
 │   ├── index.json         song list (empty — see "Corpus")
 │   └── sample.lab         synthetic annotation for testing the parser
@@ -176,14 +175,12 @@ Notes always live in `localStorage` first, so nothing is lost when the network
 drops. Getting them *out* is the whole point of the feature, and there are two
 routes.
 
-**Cloud sync (Notes → Cloud sync).** Notes are pushed to a Cloudflare D1
-database, so they can be read from outside the browser with no copy-paste, and
-they follow you between devices. D1 is not writable from a browser — its API
-needs an account token, which on a public static site would sit in plain sight —
-so writes go through a small Worker (`worker/`). Reads do not: the database is
-queried directly.
+**Cloud sync (Notes → Cloud sync).** Notes are pushed to the shared `site-notes`
+backend (one Cloudflare Worker + D1 for all of Alessio's sites, repo
+`alessiomartini/site-notes`, `site = 'ear-training'`), so they can be read from
+outside the browser with no copy-paste, and they follow you between devices.
 
-The Worker URL and a write token are pasted once per browser and kept in
+The Worker URL is pre-filled; the token is pasted once per browser and kept in
 `localStorage`, never in the site's source. Without them the feature is
 local-only, exactly as before. If a push fails the note is kept and marked *not
 synced*, and it goes up on the next sync.
@@ -266,10 +263,11 @@ the `*` (omitted-degree) syntax, which `parseHarte` does not validate. It used
 to execute. The display layer now builds DOM nodes and never interpolates data
 into `innerHTML`, so it renders as inert text.
 
-The Worker's `ALLOWED_ORIGIN` restricts *browsers*; it is not an access control.
-`curl` ignores CORS entirely, so the write token is the only real gate. One
-shared token, no per-note ownership, no rate limiting: anyone holding it can
-read, write and delete everything. Rotate with `wrangler secret put NOTES_TOKEN`.
+The Worker's origin allowlist restricts *browsers*; it is not an access control.
+`curl` ignores CORS entirely, so the token is the only real gate. One token for
+all of Alessio's sites, no per-note ownership, no rate limiting: anyone holding it
+can read, change and delete every site's notes. Without it one can only add a new
+note. Rotate with `npx wrangler secret put NOTES_TOKEN` in the `site-notes` repo.
 
 Notes are stored in plain text in D1. Don't paste anything into the box you
 would not want sitting in a third-party database.

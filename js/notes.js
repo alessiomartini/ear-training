@@ -11,9 +11,10 @@
  *     modifiche interroga D1 direttamente.
  *
  * D1 non e' scrivibile dal browser (l'API vuole un token d'account, che su un
- * sito pubblico sarebbe in chiaro), quindi si passa da un Worker: vedi
- * `worker/src/index.js`. Il token di scrittura si incolla una volta per browser
- * e resta in `localStorage`, non nel sorgente del sito.
+ * sito pubblico sarebbe in chiaro), quindi si passa da un Worker: quello unico
+ * per le note di tutti i siti, `site-notes` (repo alessiomartini/site-notes).
+ * Il token si incolla una volta per browser e resta in `localStorage`, non nel
+ * sorgente del sito.
  *
  * Ogni nota si porta dietro il contesto in cui e' stata scritta: una nota come
  * "questo accordo suonava sbagliato" e' inutile senza sapere quale accordo era
@@ -22,6 +23,7 @@
 
 const STORAGE_KEY = 'eartraining.notes.v1';
 const SYNC_KEY = 'eartraining.notes.sync.v1';
+const DEFAULT_ENDPOINT = 'https://site-notes.alemarti-2001.workers.dev/ear-training';
 
 /** @typedef {{id:string, text:string, at:number, page:string, context:string|null, done:boolean, pending:boolean}} Note */
 
@@ -129,6 +131,8 @@ function loadSync() {
   } catch {
     sync = { endpoint: '', token: '', device: '' };
   }
+  // Vuoto o il vecchio worker dedicato (ear-training-notes, spento): si usa site-notes.
+  if (!sync.endpoint || sync.endpoint.includes('ear-training-notes')) sync.endpoint = DEFAULT_ENDPOINT;
   return sync;
 }
 
@@ -174,7 +178,7 @@ const toRemote = (note) => ({
 const fromRemote = (row) => ({
   id: row.id,
   text: row.text,
-  at: row.created_at,
+  at: Date.parse(row.created_at),
   page: row.page ?? '',
   context: row.context ?? null,
   done: Boolean(row.done),
@@ -334,11 +338,11 @@ function build() {
   const summary = el('summary', 'notes-settings-summary', 'Cloud sync');
   settings.append(summary);
   settings.append(el('p', 'notes-settings-hint',
-    'Send notes to a Cloudflare D1 database through your Worker, so they can be '
-    + 'read without copy-paste. Leave empty to keep everything in this browser.'));
+    'Send notes to the shared site-notes database, so they can be read without '
+    + 'copy-paste. Without a token everything stays in this browser.'));
 
-  const endpoint = field('Worker URL', 'https://ear-training-notes.<you>.workers.dev');
-  const token = field('Write token', 'the NOTES_TOKEN secret', 'password');
+  const endpoint = field('Worker URL', DEFAULT_ENDPOINT);
+  const token = field('Token', 'the site-notes NOTES_TOKEN secret', 'password');
   const device = field('Device label', 'laptop, phone…');
   settings.append(endpoint.wrap, token.wrap, device.wrap);
 
