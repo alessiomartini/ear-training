@@ -33,8 +33,10 @@ how it works; it just is not moving forward for now.
 | 4. `songs.html` with one song and offset calibration | not started |
 | 5. Growing the corpus | not started |
 
-`songs.html` exists as a placeholder describing what is missing.
-`js/youtube.js` does not exist yet.
+`songs.html` lists `data/songs/index.json` (empty on purpose), embeds the video
+and plays any annotated segment. `js/youtube.js` wraps the YouTube IFrame API
+(no key) and falls back to a plain link when the API cannot load. Offset
+calibration, game modes and a real corpus are still missing.
 
 ## Layout
 

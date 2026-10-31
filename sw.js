@@ -14,7 +14,7 @@
  * Cambiare VERSION invalida tutto: e' la leva per pubblicare un aggiornamento.
  */
 
-const VERSION = 'v5';
+const VERSION = 'v6';
 const SHELL = `shell-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 
@@ -23,7 +23,7 @@ const SHELL_FILES = [
   './css/style.css', './favicon.svg', './manifest.webmanifest',
   './js/harmony.js', './js/audio.js', './js/generator.js', './js/exercises.js',
   './js/phrases.js', './js/srs.js', './js/quiz-ui.js', './js/practice.js',
-  './js/notes.js', './js/test-parser.js', './js/pwa.js',
+  './js/youtube.js', './js/songs.js', './js/notes.js', './js/test-parser.js', './js/pwa.js',
   './icons/icon-192.png', './icons/icon-512.png',
 ];
 
