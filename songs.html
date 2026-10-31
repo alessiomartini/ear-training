@@ -30,12 +30,25 @@
 
 <main class="wrap">
 
-  <h2>Songs — not built yet</h2>
+  <h2>Songs — in progress</h2>
   <p class="lede">
     This page is step 4 of the development order: it comes after Practice works
     end to end, with spaced repetition and all five levels. The shared
     foundations are already in place, though.
   </p>
+
+  <section class="panel">
+    <h3>Song list</h3>
+    <div id="song-list" aria-live="polite">Loading…</div>
+  </section>
+
+  <section class="panel" id="song-panel" hidden>
+    <h3>Player</h3>
+    <p id="song-status" class="muted" role="status"></p>
+    <div id="player"></div>
+    <h4>Annotated segments</h4>
+    <div id="segments"></div>
+  </section>
 
   <section class="panel">
     <h3>What already exists</h3>
@@ -58,8 +71,9 @@
   <section class="panel">
     <h3>What is missing</h3>
     <ul class="muted">
-      <li><code>js/youtube.js</code> — the iframe API, playback of a
-        <code>[start, end]</code> range, and continuous scrolling.</li>
+      <li>Continuous scrolling playback (<code>js/youtube.js</code> already
+        plays a <code>[start, end]</code> range, with a plain link as fallback
+        when the YouTube API cannot load).</li>
       <li>Manual calibration of the <code>offset</code>: play the first
         annotated chord and nudge it until it lines up.</li>
       <li>The three game modes: isolated segment, continuous scrolling, and
@@ -83,6 +97,7 @@
 
 </main>
 
+<script type="module" src="js/songs.js"></script>
 <script type="module" src="js/notes.js"></script>
 <script src="js/pwa.js"></script>
 </body>

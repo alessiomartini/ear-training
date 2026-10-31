@@ -6,7 +6,8 @@ Unico file per todo, idee, decisioni e diario, letto da Projects Overview
 -->
 
 ## Lasciato a metà
-- [ ] `songs.html`: manca `js/youtube.js` e un corpus di canzoni vere
+- [x] `songs.html`: `js/youtube.js` (IFrame API, intervallo [start, end], ripiego su link semplice)
+- [ ] `songs.html`: corpus di canzoni vere (licenze da verificare)
 - [ ] Metro e modulazione con canzoni vere invece di materiale generato
 - [x] `formatHarte`: coprire tutte le combinazioni di tensioni
 
@@ -68,7 +69,7 @@ qui è "se un giorno serve", non lavoro pianificato.
 
 ### Cose lasciate a metà
 
-- **`songs.html`** è un placeholder. Manca `js/youtube.js` e manca un corpus
+- **`songs.html`** ora ha `js/youtube.js` e `js/songs.js` (2026-10-31; elenco da `index.json`, player, riproduzione dei segmenti; senza rete compare il link di ripiego). Resta da fare calibrazione dell'offset e modalità di gioco; manca un corpus
   di annotazioni `.lab` reale (Isophonics / McGill Billboard / RWC hanno
   licenze da verificare prima di poter essere ridistribuiti). Vedi README.md,
   sezione "Corpus (the Songs page)".
@@ -92,6 +93,7 @@ introducono strumenti (bundler, linter, test runner), aggiungerli qui insieme
 a come verificarli.
 
 ## Log
+- 2026-10-31: 🤖 aggiunti `js/youtube.js` (IFrame API con ripiego su link) e `js/songs.js`; `songs.html` elenca il corpus (vuoto) e riproduce i segmenti; sw.js v6
 - 2026-10-31: 🤖 `formatHarte` riscritto per coprire tutte le combinazioni di tensioni/alterazioni/omissioni, con test esaustivo `tests/format-harte.test.mjs`
 - 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`; poi solo invio delle note nuove, niente token (le legge Claude dal D1); le note mandano l'autore (`?sono-alessio` segna il browser di Alessio, le altre sono di visitatori)
 - 2026-10-18: FUTURE-ARCHITECTURE.md unito in ROADMAP.md (protocollo unico)
