@@ -271,18 +271,14 @@ would not want sitting in a third-party database.
 
 ## Known limitations
 
-- **`formatHarte` cannot express every combination of tensions.**
-  `C:maj7(13)` comes back as `C:maj13`, which also implies the ninth and the
-  eleventh. This does not affect grading, which works on the `Chord` object
-  rather than the string: it only affects the label shown on screen, which is
-  why a plain-language description generated from the fields sits next to it.
-  The generator avoids the worst case anyway by always producing the ninth
-  whenever it produces an eleventh or a thirteenth — which is the real-world
-  convention. The parser page flags these rows in yellow.
-- **`formatHarte` has no shorthand for augmented sevenths, or for a diminished
-  triad with a minor seventh**: it serialises them as `7` or `maj7`, losing the
-  quality. The generator never produces them, so it cannot happen in the app,
-  but the function is still exposed.
+- **`formatHarte` is exact for every `Chord`**, including alterations (`b5`,
+  `#5`, `b9`, `#9`, `b13`), `sus` chords with a seventh, `add`-style tensions
+  without a seventh, omissions (`*3`, `*5`) and augmented or diminished triads
+  with a seventh (`C:aug(b7)`, `C:dim(b7)`). A tension shorthand (`9`, `11`,
+  `13`, `maj9`...) is used only when the chord really contains every degree it
+  implies, so `C:maj7(13)` and `C:9(13)` stay as they are instead of becoming
+  `maj13`. Run `node tests/format-harte.test.mjs` to check the whole space.
+
 - **A major V in a minor key is never used as a target.** The `DIATONIC.minor`
   table in `harmony.js` is the natural minor, and `BORROWED.minor` has no entry
   for degree 7, so `functionOf` would classify it as outside the key — a wrong
