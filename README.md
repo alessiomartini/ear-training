@@ -53,7 +53,7 @@ how it works; it just is not moving forward for now.
 │   ├── srs.js             spaced repetition on localStorage
 │   ├── quiz-ui.js         answer UI, shared between both pages
 │   ├── practice.js        controller for the Practice page
-│   ├── notes.js           in-page notes, local store + sync to site-notes
+│   ├── notes-widget.js   canonical site-notes widget (copy of site-notes/widget)
 │   ├── pwa.js             service-worker registration
 │   └── test-parser.js     controller for the parser page
 ├── sw.js                  service worker: offline + install

@@ -12,7 +12,6 @@
 
 import * as audio from './audio.js';
 import * as srs from './srs.js';
-import * as notes from './notes.js';
 import { EXERCISES, exerciseById } from './exercises.js';
 import { createQuiz } from './quiz-ui.js';
 
@@ -100,7 +99,7 @@ function init() {
     if (state.running) quiz.handleKey(ev);
   });
 
-  notes.setContextProvider(describeSituation);
+  window.SiteNotes.setContext(describeSituation);
   syncControls();
   renderStats();
 }
