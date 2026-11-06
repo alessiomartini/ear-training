@@ -6,9 +6,10 @@ Unico file per todo, idee, decisioni e diario, letto da Projects Overview
 -->
 
 ## Lasciato a metà
-- [ ] `songs.html`: manca `js/youtube.js` e un corpus di canzoni vere
+- [x] `songs.html`: `js/youtube.js` (IFrame API, intervallo [start, end], ripiego su link semplice)
+- [ ] `songs.html`: corpus di canzoni vere (licenze da verificare)
 - [ ] Metro e modulazione con canzoni vere invece di materiale generato
-- [ ] `formatHarte`: coprire tutte le combinazioni di tensioni
+- [x] `formatHarte`: coprire tutte le combinazioni di tensioni
 
 ## Idee
 
@@ -68,15 +69,20 @@ qui è "se un giorno serve", non lavoro pianificato.
 
 ### Cose lasciate a metà
 
-- **`songs.html`** è un placeholder. Manca `js/youtube.js` e manca un corpus
+- **`songs.html`** ora ha `js/youtube.js` e `js/songs.js` (2026-10-31; elenco da `index.json`, player, riproduzione dei segmenti; senza rete compare il link di ripiego). Resta da fare calibrazione dell'offset e modalità di gioco; manca un corpus
   di annotazioni `.lab` reale (Isophonics / McGill Billboard / RWC hanno
   licenze da verificare prima di poter essere ridistribuiti). Vedi README.md,
   sezione "Corpus (the Songs page)".
 - **Metro e modulazione usano materiale generato, non canzoni vere**, per lo
   stesso motivo: non c'è ancora un corpus annotato redistribuibile.
-- **`formatHarte`** non copre tutte le combinazioni di tensioni (es. settime
-  aumentate, triade diminuita con settima minore) — vedi "Known limitations"
-  nel README per i dettagli tecnici già documentati lì.
+- **`formatHarte`** ora copre tutte le combinazioni (risolto 2026-10-31).
+  Scelta: lo shorthand di tensione (`9`, `11`, `13`, `maj9`...) si usa solo se
+  l'accordo contiene davvero tutti i gradi sottostanti; altrimenti shorthand
+  base + gradi fra parentesi (`C:9(13)`, `C:maj7(13)`). Settima su triadi
+  dim/aug/sus come grado (`C:aug(b7)`, `C:dim(b7)`). Aggiunto `bb7` al parser
+  per la settima diminuita su triadi maj/min. Test senza dipendenze:
+  `node tests/format-harte.test.mjs` (344064 combinazioni + accordi del
+  generatore). `sw.js` VERSION portata a v5.
 
 ### Dipendenze
 
@@ -88,6 +94,8 @@ a come verificarli.
 
 ## Log
 - 2026-11-06: widget note v2 canonico (site-notes/widget) al posto di js/notes.js (migra eartraining.notes.v1, contesto via SiteNotes.setContext, sw v5).
+- 2026-10-31: 🤖 aggiunti `js/youtube.js` (IFrame API con ripiego su link) e `js/songs.js`; `songs.html` elenca il corpus (vuoto) e riproduce i segmenti; sw.js v6
+- 2026-10-31: 🤖 `formatHarte` riscritto per coprire tutte le combinazioni di tensioni/alterazioni/omissioni, con test esaustivo `tests/format-harte.test.mjs`
 - 2026-10-19: note sincronizzate col backend unico `site-notes`; tolto `worker/`; poi solo invio delle note nuove, niente token (le legge Claude dal D1); le note mandano l'autore (`?sono-alessio` segna il browser di Alessio, le altre sono di visitatori)
 - 2026-10-18: FUTURE-ARCHITECTURE.md unito in ROADMAP.md (protocollo unico)
 - 2026-10-15: creata la roadmap per Projects Overview

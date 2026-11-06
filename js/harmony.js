@@ -19,7 +19,7 @@ const NATURAL_PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 const INTERVAL_SEMITONES = {
   '1': 0, 'b2': 1, '2': 2, '#2': 3, 'b3': 3, '3': 4, '#3': 5,
   'b4': 4, '4': 5, '#4': 6, 'b5': 6, '5': 7, '#5': 8,
-  'b6': 8, '6': 9, '#6': 10, 'b7': 10, '7': 11, '#7': 12,
+  'b6': 8, '6': 9, '#6': 10, 'bb7': 9, 'b7': 10, '7': 11, '#7': 12,
   'b9': 13, '9': 14, '#9': 15,
   '11': 17, '#11': 18, 'b11': 16,
   'b13': 20, '13': 21, '#13': 22,
@@ -132,10 +132,12 @@ export function parseHarte(label) {
       else if (deg === '#5' && quality === 'maj') quality = 'aug';
       else if (deg === '7') seventh = 'maj7';
       else if (deg === 'b7') seventh = 'min7';
+      else if (deg === 'bb7') seventh = 'dim7';
       else if (deg === '6' && quality === 'dim') seventh = 'dim7';
       else if (!['1', '3', '5'].includes(deg)) extensions.push(deg);
     } else if (deg === '7') seventh = 'maj7';
     else if (deg === 'b7') seventh = 'min7';
+    else if (deg === 'bb7') seventh = 'dim7';
     else if (!extensions.includes(deg)) extensions.push(deg);
   }
 
@@ -188,37 +190,73 @@ const PC_NAMES_FLAT  = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'B
 export function formatHarte(chord, { flats = true } = {}) {
   if (!chord) return 'N';
   const names = flats ? PC_NAMES_FLAT : PC_NAMES_SHARP;
-  const shorthand = shorthandFor(chord);
-  const extra = chord.extensions.filter((e) => !impliedBy(shorthand).includes(e));
-  const omit = chord.omitted.map((o) => `*${o}`);
-  const parens = [...extra, ...omit];
+  const { shorthand, implied, degrees } = shorthandFor(chord);
+
+  // Gradi fuori shorthand, in ordine di altezza; poi le omissioni (*3, *5...).
+  const extra = dedupe(chord.extensions)
+    .filter((e) => !implied.includes(e) && !degrees.includes(e))
+    .sort((x, y) => (INTERVAL_SEMITONES[x] ?? 0) - (INTERVAL_SEMITONES[y] ?? 0));
+  const parens = [...degrees, ...extra, ...(chord.omitted ?? []).map((o) => `*${o}`)];
 
   let s = `${names[chord.root]}:${shorthand}`;
   if (parens.length) s += `(${parens.join(',')})`;
-  if (chord.bass !== null && chord.bass !== undefined) {
+  if (chord.bass !== null && chord.bass !== undefined && chord.bass !== chord.root) {
     s += `/${intervalName((chord.bass - chord.root + 12) % 12)}`;
   }
   return s;
 }
 
+/**
+ * Sceglie lo shorthand che descrive *esattamente* l'accordo, senza note in piu'.
+ * @returns {{shorthand:string, implied:string[], degrees:string[]}}
+ *   implied = tensioni gia' contenute nello shorthand; degrees = gradi che lo
+ *   shorthand non sa dire (settima su triadi dim/aug/sus, ...) e vanno in parentesi.
+ */
 function shorthandFor({ quality, seventh, extensions }) {
   const has = (x) => extensions.includes(x);
-  if (quality === 'sus2' || quality === 'sus4') return quality;
-  if (quality === 'hdim') return 'hdim7';
-  if (seventh === 'dim7') return 'dim7';
-  if (!seventh) {
-    if (has('6')) return quality === 'min' ? 'min6' : 'maj6';
-    return quality; // maj | min | dim | aug
+
+  if (quality === 'sus2' || quality === 'sus4') {
+    return { shorthand: quality, implied: [], degrees: seventhDegree(seventh) };
   }
-  const tail = has('13') ? '13' : has('11') ? '11' : has('9') ? '9' : '7';
-  if (quality === 'min') return seventh === 'maj7' ? 'minmaj7' : `min${tail}`;
-  if (seventh === 'maj7') return `maj${tail}`;
-  return tail; // dominante: 7 | 9 | 11 | 13
+  if (!seventh) {
+    if (quality === 'maj' || quality === 'min') {
+      if (has('6')) return { shorthand: `${quality}6`, implied: ['6'], degrees: [] };
+    }
+    // maj | min | dim | aug (hdim senza settima: stessa triade di dim)
+    return { shorthand: quality === 'hdim' ? 'dim' : quality, implied: [], degrees: [] };
+  }
+  if (quality === 'hdim') {
+    if (seventh === 'min7') return { shorthand: 'hdim7', implied: [], degrees: [] };
+    return { shorthand: 'dim', implied: [], degrees: seventhDegree(seventh) };
+  }
+  if (quality === 'dim') {
+    if (seventh === 'dim7') return { shorthand: 'dim7', implied: [], degrees: [] };
+    return { shorthand: 'dim', implied: [], degrees: seventhDegree(seventh) };
+  }
+  if (quality === 'aug') {
+    return { shorthand: 'aug', implied: [], degrees: seventhDegree(seventh) };
+  }
+  // quality maj | min con settima
+  if (seventh === 'dim7') {
+    return { shorthand: quality, implied: [], degrees: seventhDegree(seventh) };
+  }
+  if (quality === 'min' && seventh === 'maj7') {
+    return { shorthand: 'minmaj7', implied: [], degrees: [] };
+  }
+  // Scala 9 → 11 → 13: lo shorthand implica tutti i gradi sotto di se',
+  // quindi lo si usa solo se l'accordo li ha davvero tutti.
+  let tail = '7';
+  let implied = [];
+  if (has('9') && has('11') && has('13')) { tail = '13'; implied = ['9', '11', '13']; }
+  else if (has('9') && has('11')) { tail = '11'; implied = ['9', '11']; }
+  else if (has('9')) { tail = '9'; implied = ['9']; }
+  const shorthand = quality === 'min' ? `min${tail}`
+    : seventh === 'maj7' ? `maj${tail}` : tail; // dominante: 7 | 9 | 11 | 13
+  return { shorthand, implied, degrees: [] };
 }
 
-function impliedBy(shorthand) {
-  return SHORTHAND[shorthand] ? SHORTHAND[shorthand].extensions : [];
-}
+const seventhDegree = (seventh) =>
+  seventh === 'maj7' ? ['7'] : seventh === 'min7' ? ['b7'] : seventh === 'dim7' ? ['bb7'] : [];
 
 const PREFERRED_INTERVAL_NAMES =
   ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7'];
