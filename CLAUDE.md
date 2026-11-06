@@ -24,7 +24,7 @@ worker, and local data files.
 ## Notes sync
 
 - New notes are sent to the shared `site-notes` Worker + D1 (repo `alessiomartini/site-notes`,
-  `site = 'ear-training'`, endpoint in `js/notes.js`): write-only, no token. Claude reads them
+  `site = 'ear-training'`, widget `js/notes-widget.js`, canonical copy in site-notes/widget): write-only, no token. Claude reads them
   from the D1 (procedure in that repo's CLAUDE.md); the page never reads them back.
 - Bump `VERSION` in `sw.js` whenever a cached asset changes.
 
