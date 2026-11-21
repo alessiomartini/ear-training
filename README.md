@@ -30,7 +30,7 @@ how it works; it just is not moving forward for now.
 | 1. `harmony.js` + a page that tests the parser | done |
 | 2. `audio.js` + `generator.js` + Practice level 1 | done |
 | 3. `srs.js` and levels 2–5 | done |
-| 4. `songs.html` with one song and offset calibration | not started |
+| 4. `songs.html` with one song and offset calibration | partly done: page, YouTube player and segment playback work (`js/songs.js`, `js/youtube.js`); the per-song `offset` from `index.json` is applied but there is no calibration UI yet |
 | 5. Growing the corpus | not started |
 
 `songs.html` lists `data/songs/index.json` (empty on purpose), embeds the video
@@ -44,7 +44,7 @@ calibration, game modes and a real corpus are still missing.
 /
 ├── index.html
 ├── practice.html          training on synthesised chords
-├── songs.html             placeholder, step 4
+├── songs.html             song list, YouTube player, segment playback (step 4, partly)
 ├── test-parser.html       checks parseHarte against a real .lab
 ├── js/
 │   ├── harmony.js         harmonic core (Chord · Function · Grading)
@@ -55,7 +55,9 @@ calibration, game modes and a real corpus are still missing.
 │   ├── srs.js             spaced repetition on localStorage
 │   ├── quiz-ui.js         answer UI, shared between both pages
 │   ├── practice.js        controller for the Practice page
-│   ├── notes-widget.js   canonical site-notes widget (copy of site-notes/widget)
+│   ├── songs.js           controller for the Songs page
+│   ├── youtube.js         YouTube IFrame API wrapper with link fallback
+│   ├── notes-widget.js   canonical site-notes widget (copy of `widget/notes-widget.js` in the separate repo alessiomartini/site-notes)
 │   ├── pwa.js             service-worker registration
 │   └── test-parser.js     controller for the parser page
 ├── sw.js                  service worker: offline + install
@@ -128,10 +130,10 @@ replays.
   not in music, so drilling it would spend your attention on a sound you will
   never need to recognise.
 - **Metre and modulation use generated material, not real songs.** The request
-  was to play a song; the site has none, because the Songs page is unbuilt and
+  was to play a song; the site has none, because the Songs page has no corpus yet and
   the annotated corpora are not redistributable. The grooves and the modulating
   passages are real music-shaped audio — a groove has a bass and chords, not just
-  a click — but they are synthesised. Real songs arrive with the Songs page.
+  a click — but they are synthesised. Real songs arrive with a corpus on the Songs page.
 
 ## On a phone
 
