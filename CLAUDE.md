@@ -17,9 +17,9 @@ worker, and local data files.
 - Preserve accessible controls, keyboard behavior, and existing audio/data formats.
 - Do not add dependencies or a build step without approval.
 - Check `ROADMAP.md` for open ideas and half-finished parts
-  (e.g. `songs.html`, the missing corpus) before proposing new work.
+  (e.g. the missing corpus and offset calibration on `songs.html`) before proposing new work.
 
 ## Notes sync
 
-- `js/notes-widget.js` is an identical copy of `site-notes/widget/notes-widget.js` (site = `ear-training`).
+- `js/notes-widget.js` is an identical copy of `widget/notes-widget.js` from the separate repo `alessiomartini/site-notes` (the canonical one; site = `ear-training`). Change it there, then recopy.
 - Bump `VERSION` in `sw.js` whenever a cached asset changes.
